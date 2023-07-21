@@ -1,0 +1,17 @@
+*.d
+*.o
+*.ld
+*.cfg
+*.launch
+*.ioc
+
+
+#files
+.*
+
+#folders
+.settings/
+Debug/
+Drivers/
+Middlewares/
+stm32-ssd1306/
