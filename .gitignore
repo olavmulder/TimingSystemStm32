@@ -1,13 +1,10 @@
+#files
 *.d
 *.o
 *.ld
 *.cfg
 *.launch
 *.ioc
-
-
-#files
-.*
 
 #folders
 .settings/
