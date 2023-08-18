@@ -1,10 +1,14 @@
-#files
+#files extiosion
 *.d
 *.o
 *.ld
 *.cfg
 *.launch
 *.ioc
+#files
+.project
+.mxproject
+.cproject
 
 #folders
 .settings/

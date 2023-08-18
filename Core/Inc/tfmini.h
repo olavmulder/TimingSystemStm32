@@ -18,13 +18,15 @@
 typedef struct _tfSetting TFSetting;
 struct _tfSetting{
 	bool measureType;// false = mm, true = cm
-	unsigned int period; //hz 100 is default
+	unsigned int period; //is ms  10 is default
 	bool mode; //false = short, true = long
 	int rangeLimit; // -1 disabled;
 };
 extern UART_HandleTypeDef huart1;
 
+void DataHandling_Task();
 void TFInit(TFSetting setting);
 unsigned int TFGetData(char *msg, size_t len);
+
 void test_tf();
 #endif /* INC_TFMINI_H_ */

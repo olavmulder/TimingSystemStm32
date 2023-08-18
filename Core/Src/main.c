@@ -56,9 +56,8 @@ osTimerId_t myTimer01Handle;
 const osTimerAttr_t myTimer01_attributes = {
   .name = "myTimer01"
 };
+
 /* USER CODE BEGIN PV */
-
-
 const osThreadAttr_t displayTask_attributes = {
   .name = "displayTask",
   .stack_size = 1024,
@@ -68,6 +67,12 @@ const osThreadAttr_t uartTask_attributes = {
   .name = "uartTask",
   .stack_size = 512,
   .priority = (osPriority_t) osPriorityNormal5,
+};
+
+const osThreadAttr_t dataHandlingTask_attributes = {
+  .name = "dataHandlingTask",
+  .stack_size = 1024,
+  .priority = (osPriority_t) osPriorityHigh5,
 };
 /* USER CODE END PV */
 
@@ -165,7 +170,8 @@ int main(void)
   //loop threads
   osThreadId_t displayTask = osThreadNew(DisplayTask, NULL, &displayTask_attributes);
   osThreadId_t uartTask = osThreadNew(UART_Task, NULL, &uartTask_attributes);
-  if(displayTask== NULL || uartTask == NULL)
+  osThreadId_t dataHandlingTask = osThreadNew(DataHandling_Task, NULL, &dataHandlingTask_attributes);
+  if(displayTask== NULL || uartTask == NULL || dataHandlingTask)
   {
 	  return 0;
   }

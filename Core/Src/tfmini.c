@@ -11,6 +11,49 @@
 
 const size_t timeout = 100;
 
+void DataHandling_Task()
+{
+	const TFSetting setting = {
+			.measureType = true,
+			.period = 10,
+			.mode = true,
+			.rangeLimit = 12
+	};
+	unsigned long time_ms = 10;
+
+	while(1)
+	{
+		bool measurementDone = false;
+
+		if(DataInit(0,0) != 0)
+		{
+			exit(-1);
+		}
+		TFInit(setting);
+
+		//TODO: something to start measurement
+		char* recvMsg;
+		size_t len;
+		do{
+			//get data from uart connection
+			unsigned int distance = TFGetData(recvMsg, len);
+			DataAdd(distance, time_ms);
+		}while(measurementDone == false);
+
+		//get speed data
+		size_t lenSpeed;
+		DataGetLen(&lenSpeed);
+		double speed[lenSpeed];
+		if(DataCalculate(speed, lenSpeed) != 0)
+		{
+			//TODO error
+		}
+		//TODO calculate exchange
+
+	}
+}
+
+
 void StartConfig()
 {
 	const char message[8] = {0x42, 0x57, 0x02, 0x00, 0x00, 0x00, 0x01, 0x02};

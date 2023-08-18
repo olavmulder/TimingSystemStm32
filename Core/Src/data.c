@@ -7,6 +7,7 @@
 Data *head;
 Data *tail;
 
+
 int DataInit(unsigned int distance, unsigned int time)
 {
 	if(head == NULL)
