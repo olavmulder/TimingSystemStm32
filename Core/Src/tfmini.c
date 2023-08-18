@@ -36,6 +36,12 @@ void DataHandling_Task()
 		size_t len;
 		do{
 			//get data from uart connection
+			for(uint8_t i = 0)
+			if(uart1_received == true)
+			{
+				uart1_received = false;
+
+			}
 			unsigned int distance = TFGetData(recvMsg, len);
 			DataAdd(distance, time_ms);
 		}while(measurementDone == false);

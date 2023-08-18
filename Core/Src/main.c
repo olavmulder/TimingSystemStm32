@@ -56,7 +56,6 @@ osTimerId_t myTimer01Handle;
 const osTimerAttr_t myTimer01_attributes = {
   .name = "myTimer01"
 };
-
 /* USER CODE BEGIN PV */
 const osThreadAttr_t displayTask_attributes = {
   .name = "displayTask",
@@ -241,18 +240,12 @@ void SystemClock_Config(void)
   */
 static void MX_NVIC_Init(void)
 {
-  /* EXTI9_5_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
   /* I2C1_EV_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(I2C1_EV_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(I2C1_EV_IRQn);
   /* I2C1_ER_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(I2C1_ER_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(I2C1_ER_IRQn);
-  /* USART1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(USART1_IRQn);
 }
 
 /**
@@ -337,6 +330,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
 }

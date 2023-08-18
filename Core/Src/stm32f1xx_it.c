@@ -58,7 +58,6 @@
 /* External variables --------------------------------------------------------*/
 extern I2C_HandleTypeDef hi2c1;
 extern UART_HandleTypeDef huart1;
-extern UART_buffer uart1_buffer;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -210,57 +209,30 @@ void I2C1_ER_IRQHandler(void)
 
   /* USER CODE END I2C1_ER_IRQn 1 */
 }
-bool _contains(char* buf, char ch)
-{
-	size_t len = strlen(buf);
-	while(len)
-	{
-		if(buf[len] == ch)
-			return true;
-		len--;
-	}
-	return false;
-}
+
 /**
   * @brief This function handles USART1 global interrupt.
   */
 void USART1_IRQHandler(void)
 {
-	HAL_UART_RxCpltCallback(&huart1);
-	/* USER CODE BEGIN USART1_IRQn 0 */
+  /* USER CODE BEGIN USART1_IRQn 0 */
 
-	/* USER CODE END USART1_IRQn 0 */
-	//HAL_UART_IRQHandler(&huart1);
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
 
-	/* USER CODE BEGIN USART1_IRQn 1 */
-
-	/* USER CODE END USART1_IRQn 1 */
+  /* USER CODE END USART1_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
+char uart1Buf[10];
+volatile bool uart1Received;
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     if (huart == &huart1) // Check if it's the correct UART instance
     {
-    	if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) != RESET)
-		{
-			size_t len = uart1_buffer.size;
-			size_t left = sizeof(uart1_buffer.data) - len;
-			char buf[50] = {'\0',};
-			HAL_UART_Receive_IT(&huart1, (uint8_t*)buf, sizeof(buf));
-
-			if(strlen(buf) < left)
-			{
-				if(_contains(buf, '\0') || _contains(buf, '\x0D'))//end
-					uart1_buffer.received = true;
-				snprintf(&uart1_buffer.data[len], strlen(buf), "%s", buf);
-				uart1_buffer.size = strlen(uart1_buffer.data);
-			}
-			__HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_RXNE);
-		}
-        // Handle received data
-        // Access received data using huart->Instance->DR or other HAL functions
-        // Restart reception
+    	HAL_UART_Receive_IT(&huart1, (uint8_t*)uart1Buf, sizeof(uart1Buf));
+    	uart1Received = true;
     }
 }
 
