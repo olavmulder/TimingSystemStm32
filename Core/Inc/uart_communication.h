@@ -9,7 +9,6 @@
 #define INC_UART_COMMUNICATION_H_
 
 #include "cmsis_os.h"
-#include "stm32f1xx_hal.h"
 #include "stm32f1xx_it.h"
 #include "display.h"
 #include <string.h>

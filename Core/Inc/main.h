@@ -33,6 +33,7 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "display.h"
 #include "uart_communication.h"
+#include "tfmini.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

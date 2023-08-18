@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
+#include "uart_communication.h"
 
 typedef struct _data Data;
 struct _data

@@ -128,6 +128,7 @@ int main(void)
 
   /*place test there*/
   test_Data(); //valid
+  test_tf();
   char _out[] = "start";
   HAL_UART_Transmit(&huart1, (uint8_t *) _out, strlen(_out), 10);
   /* USER CODE END 2 */
