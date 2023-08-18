@@ -20,6 +20,9 @@ typedef enum _type_runner
 	INCOMMING_RUNNER, OUTGOING_RUNNER
 }Type_Runner;
 
+extern char atlete_incoming_name[20];
+extern char atlete_outgoing_name[20];
+
 void DisplayTask(void* pvParamters);
 void DisplayAll();
 void DisplayAtlete(Type_Runner type);

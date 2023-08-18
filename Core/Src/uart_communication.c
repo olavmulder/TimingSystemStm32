@@ -8,51 +8,41 @@
 
 #include "uart_communication.h"
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-volatile bool receviedUART = false;
+UART_buffer uart1_buffer;
+
 
 void UART_Task()
-
-{
-=======
-=======
->>>>>>> 3b48119 (init)
-volatile bool receivedUART = false;
-uint32_t message_id = 0;
-void UART_Task()
-
 {
 
-<<<<<<< HEAD
->>>>>>> 3b48119 (init)
-=======
->>>>>>> 3b48119 (init)
 	while(1)
 	{
-		if(receivedUART)
+		if(uart1_buffer.received)
 		{
-			//handle UART
-			receivedUART = false;
-<<<<<<< HEAD
-<<<<<<< HEAD
+			UART_Read();
 		}
-	}
-}
-=======
-=======
->>>>>>> 3b48119 (init)
-			message_id++;
-
-		}
+		osDelay(50);
 	}
 }
 
-void UART_Send()
+void HandleInput(UART_buffer *buffer)
 {
-
+	size_t len = (buffer->size < 20) ? buffer->size : 20;
+	snprintf(atlete_incoming_name, len, "%s", buffer->data);
 }
-<<<<<<< HEAD
->>>>>>> 3b48119 (init)
-=======
->>>>>>> 3b48119 (init)
+void UART_Read()
+{
+	//handle
+	HandleInput(&uart1_buffer);
+	//reset buffer
+	memset(uart1_buffer.data, '\0', uart1_buffer.size);
+	uart1_buffer.received = false;
+	uart1_buffer.size = 0;
+}
+
+/*void UART_Send(char* msg, size_t len)
+{
+	HAL_UART_Transmit(huart1, (uint8_t*)msg, len);
+
+
+}*/
+

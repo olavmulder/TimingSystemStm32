@@ -42,7 +42,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
-
 UART_HandleTypeDef huart1;
 
 /* Definitions for defaultTask */
@@ -58,23 +57,18 @@ const osTimerAttr_t myTimer01_attributes = {
   .name = "myTimer01"
 };
 /* USER CODE BEGIN PV */
-const osThreadAttr_t buttonTask_attributes = {
-  .name = "buttonTask",
-  .stack_size = 1024,
-  .priority = (osPriority_t) osPriorityNormal3,
-};
-const osThreadAttr_t ledTask_attributes = {
-  .name = "ledTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal2,
-};
+
+
 const osThreadAttr_t displayTask_attributes = {
   .name = "displayTask",
   .stack_size = 1024,
   .priority = (osPriority_t) osPriorityNormal4,
 };
-
-volatile bool button_pressed = false;
+const osThreadAttr_t uartTask_attributes = {
+  .name = "uartTask",
+  .stack_size = 512,
+  .priority = (osPriority_t) osPriorityNormal5,
+};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -130,6 +124,12 @@ int main(void)
   /* USER CODE BEGIN 2 */
   ssd1306_Reset();
   ssd1306_Init();
+  //this test does work
+
+  /*place test there*/
+  test_Data(); //valid
+  char _out[] = "start";
+  HAL_UART_Transmit(&huart1, (uint8_t *) _out, strlen(_out), 10);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -163,8 +163,12 @@ int main(void)
   /* add threads, ... */
   //loop threads
   osThreadId_t displayTask = osThreadNew(DisplayTask, NULL, &displayTask_attributes);
-  osThreadId_t ledTask = osThreadNew(LedTask, NULL, &ledTask_attributes);
-  osThreadId_t buttonTask = osThreadNew(ButtonTask, NULL, &buttonTask_attributes);
+  osThreadId_t uartTask = osThreadNew(UART_Task, NULL, &uartTask_attributes);
+  if(displayTask== NULL || uartTask == NULL)
+  {
+	  return 0;
+  }
+  //osThreadId_t buttonTask = osThreadNew(ButtonTask, NULL, &buttonTask_attributes);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -178,6 +182,7 @@ int main(void)
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1)
   {
     /* USER CODE END WHILE */
@@ -232,6 +237,15 @@ static void MX_NVIC_Init(void)
   /* EXTI9_5_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(EXTI9_5_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+  /* I2C1_EV_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(I2C1_EV_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(I2C1_EV_IRQn);
+  /* I2C1_ER_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(I2C1_ER_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(I2C1_ER_IRQn);
+  /* USART1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(USART1_IRQn);
 }
 
 /**
@@ -281,7 +295,7 @@ static void MX_USART1_UART_Init(void)
   /* USER CODE END USART1_Init 0 */
 
   /* USER CODE BEGIN USART1_Init 1 */
-
+   __HAL_RCC_USART1_CLK_ENABLE();
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
   huart1.Init.BaudRate = 115200;
@@ -308,7 +322,6 @@ static void MX_USART1_UART_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
 /* USER CODE BEGIN MX_GPIO_Init_1 */
 /* USER CODE END MX_GPIO_Init_1 */
 
@@ -317,23 +330,6 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, led_reset_Pin|led_timer_toggle_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pins : led_reset_Pin led_timer_toggle_Pin */
-  GPIO_InitStruct.Pin = led_reset_Pin|led_timer_toggle_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : button_input_Pin */
-  GPIO_InitStruct.Pin = button_input_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(button_input_GPIO_Port, &GPIO_InitStruct);
-
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
 }
@@ -355,7 +351,7 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+
   }
   /* USER CODE END 5 */
 }
@@ -379,8 +375,7 @@ void Error_Handler(void)
   __disable_irq();
   while (1)
   {
-	  HAL_GPIO_WritePin(led0_GPIO_Port, led0_Pin, GPIO_PIN_SET);
-	  //HAL_Delay();
+
   }
   /* USER CODE END Error_Handler_Debug */
 }

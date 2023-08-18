@@ -32,7 +32,6 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "display.h"
-#include "led.h"
 #include "uart_communication.h"
 /* USER CODE END Includes */
 
@@ -59,13 +58,7 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define led_reset_Pin GPIO_PIN_4
-#define led_reset_GPIO_Port GPIOA
-#define led_timer_toggle_Pin GPIO_PIN_5
-#define led_timer_toggle_GPIO_Port GPIOA
-#define button_input_Pin GPIO_PIN_6
-#define button_input_GPIO_Port GPIOA
-#define button_input_EXTI_IRQn EXTI9_5_IRQn
+
 
 /* USER CODE BEGIN Private defines */
 

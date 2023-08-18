@@ -53,12 +53,12 @@
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
 extern I2C_HandleTypeDef hi2c1;
 extern UART_HandleTypeDef huart1;
+extern UART_buffer uart1_buffer;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -184,23 +184,6 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles EXTI line[9:5] interrupts.
-  */
-void EXTI9_5_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
-	if (__HAL_GPIO_EXTI_GET_IT(button_input_Pin) != RESET) {		// Clear the pending interrupt flag for EXTI line 0
-		 __HAL_GPIO_EXTI_CLEAR_IT(button_input_Pin);
-		 button_pressed = true;
-	 }
-  /* USER CODE END EXTI9_5_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(button_input_Pin);
-  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
-
-  /* USER CODE END EXTI9_5_IRQn 1 */
-}
-
-/**
   * @brief This function handles I2C1 event interrupt.
   */
 void I2C1_EV_IRQHandler(void)
@@ -227,21 +210,58 @@ void I2C1_ER_IRQHandler(void)
 
   /* USER CODE END I2C1_ER_IRQn 1 */
 }
-
+bool _contains(char* buf, char ch)
+{
+	size_t len = strlen(buf);
+	while(len)
+	{
+		if(buf[len] == ch)
+			return true;
+		len--;
+	}
+	return false;
+}
 /**
   * @brief This function handles USART1 global interrupt.
   */
 void USART1_IRQHandler(void)
 {
-  /* USER CODE BEGIN USART1_IRQn 0 */
+	HAL_UART_RxCpltCallback(&huart1);
+	/* USER CODE BEGIN USART1_IRQn 0 */
 
-  /* USER CODE END USART1_IRQn 0 */
-  HAL_UART_IRQHandler(&huart1);
-  /* USER CODE BEGIN USART1_IRQn 1 */
+	/* USER CODE END USART1_IRQn 0 */
+	//HAL_UART_IRQHandler(&huart1);
 
-  /* USER CODE END USART1_IRQn 1 */
+	/* USER CODE BEGIN USART1_IRQn 1 */
+
+	/* USER CODE END USART1_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart == &huart1) // Check if it's the correct UART instance
+    {
+    	if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) != RESET)
+		{
+			size_t len = uart1_buffer.size;
+			size_t left = sizeof(uart1_buffer.data) - len;
+			char buf[50] = {'\0',};
+			HAL_UART_Receive_IT(&huart1, (uint8_t*)buf, sizeof(buf));
+
+			if(strlen(buf) < left)
+			{
+				if(_contains(buf, '\0') || _contains(buf, '\x0D'))//end
+					uart1_buffer.received = true;
+				snprintf(&uart1_buffer.data[len], strlen(buf), "%s", buf);
+				uart1_buffer.size = strlen(uart1_buffer.data);
+			}
+			__HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_RXNE);
+		}
+        // Handle received data
+        // Access received data using huart->Instance->DR or other HAL functions
+        // Restart reception
+    }
+}
 
 /* USER CODE END 1 */

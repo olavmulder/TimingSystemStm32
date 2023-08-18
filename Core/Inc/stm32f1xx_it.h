@@ -32,7 +32,7 @@
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
- extern volatile bool button_pressed;
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

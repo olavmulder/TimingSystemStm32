@@ -7,6 +7,8 @@
 
 #include "../Inc/display.h"
 
+char atlete_incoming_name[20];
+char atlete_outgoing_name[20];
 void DisplayTask(void* pvParamters)
 {
 	while(1)
@@ -15,7 +17,7 @@ void DisplayTask(void* pvParamters)
 		//show i on display
 
 		ssd1306_UpdateScreen();
-		osDelay(10);
+		osDelay(100);
 	}
 }
 void DisplayAll()
@@ -29,8 +31,7 @@ void DisplayAtlete(Type_Runner type)
 	char string[50];
 	if(type == INCOMMING_RUNNER)
 	{
-		const char *atlete_name = "Olav";
-		strcpy(string, atlete_name);
+		strcpy(string, atlete_incoming_name);
 		strcat(string, ": ");
 		char timeString[10];
 		if(DisplayTime(timeString, 9.58) != 0)
@@ -44,8 +45,7 @@ void DisplayAtlete(Type_Runner type)
 	}
 	else
 	{
-		const char *atlete_name = "Sven";
-		strcpy(string, atlete_name);
+		strcpy(string, atlete_outgoing_name);
 		strcat(string, ": ");
 		char timeString[10];
 		if(DisplayTime(timeString, 10.58) != 0)
@@ -55,7 +55,7 @@ void DisplayAtlete(Type_Runner type)
 			return;
 		}
 		strcat(string, timeString);
-		ssd1306_SetCursor(2, 2*18);
+		ssd1306_SetCursor(2, 2*10);
 
 	}
 	ssd1306_WriteString(string, Font_7x10, Black);
