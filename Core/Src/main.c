@@ -42,6 +42,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
+
 UART_HandleTypeDef huart1;
 
 /* Definitions for defaultTask */
@@ -131,8 +132,8 @@ int main(void)
   //this test does work
 
   /*place test there*/
-  test_Data(); //valid
-  test_tf();
+  //test_Data(); //valid
+  //test_tf();
   char _out[] = "start";
   HAL_UART_Transmit(&huart1, (uint8_t *) _out, strlen(_out), 10);
   /* USER CODE END 2 */
@@ -168,9 +169,9 @@ int main(void)
   /* add threads, ... */
   //loop threads
   osThreadId_t displayTask = osThreadNew(DisplayTask, NULL, &displayTask_attributes);
-  osThreadId_t uartTask = osThreadNew(UART_Task, NULL, &uartTask_attributes);
-  osThreadId_t dataHandlingTask = osThreadNew(DataHandling_Task, NULL, &dataHandlingTask_attributes);
-  if(displayTask== NULL || uartTask == NULL || dataHandlingTask)
+  //osThreadId_t uartTask = osThreadNew(UART_Task, NULL, &uartTask_attributes);
+  //osThreadId_t dataHandlingTask = osThreadNew(DataHandling_Task, NULL, &dataHandlingTask_attributes);
+  if(displayTask== NULL /*|| uartTask == NULL || dataHandlingTask*/)
   {
 	  return 0;
   }
@@ -246,6 +247,9 @@ static void MX_NVIC_Init(void)
   /* I2C1_ER_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(I2C1_ER_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(I2C1_ER_IRQn);
+  /* USART1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(USART1_IRQn);
 }
 
 /**
@@ -295,7 +299,7 @@ static void MX_USART1_UART_Init(void)
   /* USER CODE END USART1_Init 0 */
 
   /* USER CODE BEGIN USART1_Init 1 */
-   __HAL_RCC_USART1_CLK_ENABLE();
+
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
   huart1.Init.BaudRate = 115200;
@@ -352,6 +356,7 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
+		HAL_UART_Receive_IT(&huart1, (uint8_t*)uart1Buf, sizeof(uart1Buf));
 
   }
   /* USER CODE END 5 */

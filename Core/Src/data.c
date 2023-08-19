@@ -38,6 +38,9 @@ void DataReset()
 		free(temp);
 	}
 }
+/**
+ * runned distance since last measurement
+ */
 int DataAdd(unsigned int distance, unsigned int time)
 {
 	Data *temp;
@@ -85,7 +88,7 @@ int DataCalculate(double*speed, size_t lenIn)
 	for(size_t i = 0; i < len; i++)
 	{
 		//v = s / t
-		if(head->distance > 0 && head->time > 0)
+		if(temp->distance > 0 && temp->time > 0)
 			speed[i] = (double)((double)temp->distance / (double)temp->time);
 		else
 			speed[i] = 0;
@@ -93,6 +96,9 @@ int DataCalculate(double*speed, size_t lenIn)
 	}
 	return 0;
 }
+
+
+
 void test_init()
 {
 	unsigned int distance = 100;
