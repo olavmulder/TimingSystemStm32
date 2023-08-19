@@ -72,6 +72,9 @@ int CalculateRelay(){
 }
 */
 
+/**
+ * set the speed & distance array in atlete struct
+ */
 int RelaySetSpeed(Atlete *atlete)
 {
 	size_t len = 0;
@@ -80,70 +83,58 @@ int RelaySetSpeed(Atlete *atlete)
 		return -1;
 	atlete->speed = (double*)malloc(sizeof(double)*len);
 	atlete->distance = (double*)malloc(sizeof(double)*len);
+	atlete->len = len;
 	if(DataCalculate(atlete->speed,atlete->distance, len) < 0)
 	{
 		return -1;
 	}
 }
 
-/**
- * calcualte avg speed over DISTNACE_BETWEEN_MEASUREMENT
- */
-int RelaySetSpeedForDistance(Atlete *atlete, double timeAframe)
-{
-	if(atlete == NULL)
-		return -1;
-	size_t index = 0;
-	double totalDistance = 0;
-	double totalTime = 0;
-	for(size_t i = 0; i < atlete->len; i++)
-	{
-		totalTime +=timeAframe;
-		totalDistance += atlete->distance[i];
-		if(totalDistance >= DISTANCE_BETWEEN_MEASUREMENT)
-		{
-			//v = s/t
-			atlete->speedDistance[index] = totalDistance / totalTime;
-			totalDistance = 0;
-			totalTime = 0;
-			index++;
-		}
-	}
-	return 0;
-
-}
 
 /**
  * find crosspoint, based on both speeds of in and out comming runner
  *return -1, no array init
  *return -2 no crosspoint
  */
-int RelayFindCrossPoint(Atlete *in, Atlete *out)
+double RelayFindCrossPoint(Atlete *in, Atlete *out)
 {
 	if(in == NULL || out == NULL)
 	{
 		return -1;
 	}
-	size_t index = 0;
-	size_t min = (in->len < out->len) ? in->len : out->len;
-	size_t i = 0;
-	for(; i < min; i++)
+	/*take outgoing runner, and compare its speed at distance x
+	to speed at distance of incoming runner*/
+	bool found = false;
+	size_t indexOutrunner = 0;
+	size_t indexInrunner = 0;
+	double tempDistance = 0;
+	double inDistance = 0;
+	while(1)
 	{
-		if(out->speed[i] >= in->speed[i])
+		if(indexOutrunner >= out->len)
+			break;
+		tempDistance += out->distance[indexOutrunner];
+		do
 		{
-			return i;
-		}
-	}
-	//in case the outgoing runner has more timeframes, because it it slower
-	//compare the last time of incoming runner with the outgoing runner
-	for(size_t j = i; j < out->len; j++)
-	{
-		if(out->speed[j] >= in->speed[i])
+			/*find index in incoming runner where the
+			total distance is equal to the outgoing runner
+			*/
+			inDistance += in->distance[indexInrunner];
+			indexInrunner++;
+		}while(tempDistance > inDistance);
+		//if speed incoming < speed outgoing break
+		if(in->speed[indexInrunner] < out->speed[indexOutrunner])
 		{
-			return j;
+			break;
 		}
+		//update variabeles
+		indexOutrunner++;
+		inDistance = 0;
+		indexInrunner = 0;
 	}
-	return -2;
+
+	//return the  distance that was ran by the outgoing runner
+	return tempDistance;
 }
 
 /**
@@ -197,9 +188,33 @@ double DataFindCallPoint(double time, double speedAtExchange, double exchangePoi
 	return (exchangePoint - (speedAtExchange * time));
 }
 
+void test_cross_point()
+{
+	DataReset();
+	double distance [] =  {0.05, 0.10, 0.15, 0.20};
+	double time [] = 	  {0.1,  0.1,  0.1,  0.1};
+
+	double distance1 [] =  {0.20, 0.17, 0.13, 0.10};
+	double time1 [] = 	  {0.1,  0.1,  0.1,  0.1};
+	DataInit(distance[0], time[0]);
+	for(uint8_t i  = 1; i < 4; i++)
+		DataAdd(distance[i], time[i]);
+	Atlete a;
+	assert(RelaySetSpeed(&a) == 0);
+	DataReset();
+
+	DataInit(distance1[0], time1[0]);
+	for(uint8_t i  = 1; i < 4; i++)
+		DataAdd(distance1[i], time1[i]);
+	Atlete b;
+	assert(RelaySetSpeed(&b) == 0);
+	double res = RelayFindCrossPoint(&b,&a);
+
+}
 
 void test_setspeed()
 {
+	DataReset();
 	double distance [] =  {0.05, 0.10, 0.15, 0.20};
 	double time [] = 	  {0.1,  0.1,  0.1,  0.1};
 	DataInit(distance[0], time[0]);
@@ -210,10 +225,11 @@ void test_setspeed()
 	assert(a.speed[0] == 0.5);
 	assert(a.speed[3] == 2);
 	assert(a.distance[0] == 0.05);
-	assert(a.distance[4] == 0.20);
+	assert(a.distance[3] == 0.20);
+
 }
 void test_relay()
 {
 	test_setspeed();
-
+	test_cross_point();
 }
