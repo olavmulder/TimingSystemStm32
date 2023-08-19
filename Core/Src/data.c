@@ -7,8 +7,7 @@
 Data *head;
 Data *tail;
 
-
-int DataInit(unsigned int distance, unsigned int time)
+int DataInit(double distance, double time)
 {
 	if(head == NULL)
 	{
@@ -38,7 +37,7 @@ void DataReset()
 		free(temp);
 	}
 }
-int DataAdd(unsigned int distance, unsigned int time)
+int DataAdd(double distance, double time)
 {
 	Data *temp;
 	temp = (Data*)malloc(sizeof(Data));
