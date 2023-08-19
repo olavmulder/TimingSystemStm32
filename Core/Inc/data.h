@@ -17,15 +17,15 @@
 typedef struct _data Data;
 struct _data
 {
-	unsigned int distance; //distance in centimeters
-	unsigned int time;//time in milliseconds
+	double distance; //distance in centimeters
+	double time;//time in milliseconds
 	Data 		 *nPtr;
 };
 
 
-int DataInit(unsigned int distance, unsigned int time);
+int DataInit(double distance, double time);
 void DataReset();
-int DataAdd(unsigned int distance, unsigned int time);
+int DataAdd(double distance, double time);
 void DataGetLen(size_t *len);
 int DataCalculate(double*speed, double*distance, size_t lenIn);
 
