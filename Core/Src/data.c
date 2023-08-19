@@ -72,9 +72,9 @@ void DataGetLen(size_t *len)
  * speed: double * array, array with calculated speed.
  * return -1: speed in Null, -2 len en array size are not equal
  */
-int DataCalculate(double*speed, size_t lenIn)
+int DataCalculate(double*speed, double*distance, size_t lenIn)
 {
-	if(speed == NULL)
+	if(speed == NULL || distance == NULL)
 	{
 		return -1;
 	}
@@ -87,6 +87,7 @@ int DataCalculate(double*speed, size_t lenIn)
 	Data *temp = head;
 	for(size_t i = 0; i < len; i++)
 	{
+		distance[i] = temp->distance;
 		//v = s / t
 		if(temp->distance > 0 && temp->time > 0)
 			speed[i] = (double)((double)temp->distance / (double)temp->time);
@@ -134,18 +135,20 @@ void test_calculate()
 {
 
 	size_t len = 0;
-	assert(DataCalculate(NULL, len) == -1);
+	assert(DataCalculate(NULL,NULL, len) == -1);
 	DataGetLen(&len);
 	assert(len == 3);
 	double speed[len];
-	assert(DataCalculate(speed, len) == 0);
+	double distance[len];
+	assert(DataCalculate(speed,distance, len) == 0);
 	assert(speed[0] == 50);  // 100 /2 = 50
 	assert(speed[1] == 250); // 1000/4 =250
 	assert(speed[2] == 4);	 //	20 /5 = 4
 	DataAdd(0,0);
 	DataGetLen(&len);
 	double speed1[len];
-	assert(DataCalculate(speed1, len) == 0);
+	double distance1[len];
+	assert(DataCalculate(speed1,distance1, len) == 0);
 }
 void test_reset()
 {
