@@ -127,11 +127,13 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-  ssd1306_Reset();
   ssd1306_Init();
+  ssd1306_Reset();
+
   //this test does work
 
   /*place test there*/
+  test_relay();
   //test_Data(); //valid
   //test_tf();
   char _out[] = "start";
@@ -241,15 +243,18 @@ void SystemClock_Config(void)
   */
 static void MX_NVIC_Init(void)
 {
+  /* USART1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(USART1_IRQn);
   /* I2C1_EV_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(I2C1_EV_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(I2C1_EV_IRQn);
   /* I2C1_ER_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(I2C1_ER_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(I2C1_ER_IRQn);
-  /* USART1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(USART1_IRQn);
+  /* RCC_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(RCC_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(RCC_IRQn);
 }
 
 /**
@@ -356,7 +361,7 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-		HAL_UART_Receive_IT(&huart1, (uint8_t*)uart1Buf, sizeof(uart1Buf));
+		//HAL_UART_Receive_IT(&huart1, (uint8_t*)uart1Buf, sizeof(uart1Buf));
 
   }
   /* USER CODE END 5 */

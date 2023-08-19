@@ -161,6 +161,15 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
   /* USER CODE END SysTick_IRQn 0 */
+  HAL_IncTick();
+#if (INCLUDE_xTaskGetSchedulerState == 1 )
+  if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
+  {
+#endif /* INCLUDE_xTaskGetSchedulerState */
+  xPortSysTickHandler();
+#if (INCLUDE_xTaskGetSchedulerState == 1 )
+  }
+#endif /* INCLUDE_xTaskGetSchedulerState */
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */
@@ -172,6 +181,19 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32f1xx.s).                    */
 /******************************************************************************/
+
+/**
+  * @brief This function handles RCC global interrupt.
+  */
+void RCC_IRQHandler(void)
+{
+  /* USER CODE BEGIN RCC_IRQn 0 */
+
+  /* USER CODE END RCC_IRQn 0 */
+  /* USER CODE BEGIN RCC_IRQn 1 */
+
+  /* USER CODE END RCC_IRQn 1 */
+}
 
 /**
   * @brief This function handles I2C1 event interrupt.

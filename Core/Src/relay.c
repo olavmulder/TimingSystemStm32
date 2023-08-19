@@ -5,12 +5,13 @@
  *      Author: olav
  */
 
-#include "../inc/data.h"
+#include "../Inc/relay.h"
 
 /**
  * Do all calcualtions with given input
  * @return
  */
+/*
 int CalculateRelay(){
 	Atlete atleteIn = {
 			.name = "empty",
@@ -29,8 +30,8 @@ int CalculateRelay(){
 		{
 			return -1;
 		}
-		RelaySetSpeedForDistance();
-		free(atleteIn->speed);
+		//RelaySetSpeedForDistance();
+		//free(atleteIn->speed);
 
 	}
 	else if(number == 1)
@@ -39,7 +40,7 @@ int CalculateRelay(){
 			return -1;
 
 		//are both really set
-		if(atleteIn->speed == NULL || atleteOut->speed == NULL)
+		if(atleteIn.speed == NULL || atleteOut.speed == NULL)
 			return -1;
 
 		//both set, now calculate crosspoint
@@ -69,6 +70,8 @@ int CalculateRelay(){
 
 	return 0;
 }
+*/
+
 int RelaySetSpeed(Atlete *atlete)
 {
 	size_t len = 0;
@@ -76,10 +79,38 @@ int RelaySetSpeed(Atlete *atlete)
 	if(len <= 0)
 		return -1;
 	atlete->speed = (double*)malloc(sizeof(double)*len);
-	if(DataCalculate(atlete->speed, len) < 0)
+	atlete->distance = (double*)malloc(sizeof(double)*len);
+	if(DataCalculate(atlete->speed,atlete->distance, len) < 0)
 	{
 		return -1;
 	}
+}
+
+/**
+ * calcualte avg speed over DISTNACE_BETWEEN_MEASUREMENT
+ */
+int RelaySetSpeedForDistance(Atlete *atlete, double timeAframe)
+{
+	if(atlete == NULL)
+		return -1;
+	size_t index = 0;
+	double totalDistance = 0;
+	double totalTime = 0;
+	for(size_t i = 0; i < atlete->len; i++)
+	{
+		totalTime +=timeAframe;
+		totalDistance += atlete->distance[i];
+		if(totalDistance >= DISTANCE_BETWEEN_MEASUREMENT)
+		{
+			//v = s/t
+			atlete->speedDistance[index] = totalDistance / totalTime;
+			totalDistance = 0;
+			totalTime = 0;
+			index++;
+		}
+	}
+	return 0;
+
 }
 
 /**
@@ -87,7 +118,7 @@ int RelaySetSpeed(Atlete *atlete)
  *return -1, no array init
  *return -2 no crosspoint
  */
-int RelayFindCrossPoint(AtleteData *in, AtleteData *out)
+int RelayFindCrossPoint(Atlete *in, Atlete *out)
 {
 	if(in == NULL || out == NULL)
 	{
@@ -148,15 +179,16 @@ double DataFindTakeOffPoint(double exchangePoint, double* timeIn, double* timeOu
 	{
 		return (-1);
 	}
-	double timeForOut = GetTimeToPoint(exchangePoint, timeOut, speedOut, len, reactionTime);
+	/*double timeForOut = GetTimeToPoint(exchangePoint, timeOut, speedOut, len, reactionTime);
 	double timeForIn = GetTimeToPoint(exchangePoint, timeIn, speedIn, len, 0.00);
 	double avgSpeedIn = exchangePoint / timeForIn;
 	double avgSpeedOut = exchangePoint / timeForOut;
 
 	double relativeSpeed = avgSpeedIn - avgSpeedOut;
 	double distanceAhead = (avgSpeedOut * timeForIn) / relativeSpeed; // meters
+	*/
 	/*s = v * t*/
-	return distanceAhead;
+	//return distanceAhead;
 }
 
 double DataFindCallPoint(double time, double speedAtExchange, double exchangePoint)
@@ -165,18 +197,23 @@ double DataFindCallPoint(double time, double speedAtExchange, double exchangePoi
 	return (exchangePoint - (speedAtExchange * time));
 }
 
-/*
- * kijk linkedIn & bedrijf, ingeintresserd in bedrijf
- * veel leren?!
- * Misschien nog praten met collega's
- * */
-void TestCrossPoint()
+
+void test_setspeed()
 {
-	AtleteData atleteData[2];
-	GetDoubleFromFile("times_old.txt", atleteData, 2);
-	AtleteSetSpeed(&atleteData[0]);
-	AtleteSetSpeed(&atleteData[1]);
-	printf("\nindex cross = %d\n", DataFindCrossPoint(&atleteData[0], &atleteData[1]));
-	printf("\nindex cross = %d\n", DataFindCrossPoint(&atleteData[1], &atleteData[0]));
+	double distance [] =  {0.05, 0.10, 0.15, 0.20};
+	double time [] = 	  {0.1,  0.1,  0.1,  0.1};
+	DataInit(distance[0], time[0]);
+	for(uint8_t i  = 1; i < 4; i++)
+		DataAdd(distance[i], time[i]);
+	Atlete a;
+	assert(RelaySetSpeed(&a) == 0);
+	assert(a.speed[0] == 0.5);
+	assert(a.speed[3] == 2);
+	assert(a.distance[0] == 0.05);
+	assert(a.distance[4] == 0.20);
+}
+void test_relay()
+{
+	test_setspeed();
 
 }

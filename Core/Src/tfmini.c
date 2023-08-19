@@ -10,7 +10,7 @@
 #include "../Inc/tfmini.h"
 
 const size_t timeout = 100;
-
+/*
 void DataHandling_Task()
 {
 	const TFSetting setting = {
@@ -52,8 +52,7 @@ void DataHandling_Task()
 
 	}
 }
-
-
+*/
 void StartConfig()
 {
 	const char message[8] = {0x42, 0x57, 0x02, 0x00, 0x00, 0x00, 0x01, 0x02};

@@ -34,6 +34,7 @@ extern "C" {
 #include "display.h"
 #include "uart_communication.h"
 #include "tfmini.h"
+#include "relay.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
