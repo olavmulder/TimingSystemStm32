@@ -9,17 +9,16 @@
 
 char atlete_incoming_name[20];
 char atlete_outgoing_name[20];
-void DisplayTask(void* pvParamters)
+
+/*void DisplayTask(void* pvParamters)
 {
 	while(1)
 	{
 		DisplayAll();
 		//show i on display
-
 		ssd1306_UpdateScreen();
-		osDelay(100);
 	}
-}
+}*/
 void DisplayAll()
 {
 	DisplayAtlete(INCOMMING_RUNNER);
