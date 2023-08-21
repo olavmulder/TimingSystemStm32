@@ -71,8 +71,6 @@ void HAL_MspInit(void)
   __HAL_RCC_PWR_CLK_ENABLE();
 
   /* System interrupt init*/
-  /* PendSV_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(PendSV_IRQn, 15, 0);
 
   /* Peripheral interrupt init */
 
@@ -139,9 +137,6 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c)
 
     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_7);
 
-    /* I2C1 interrupt DeInit */
-    HAL_NVIC_DisableIRQ(I2C1_EV_IRQn);
-    HAL_NVIC_DisableIRQ(I2C1_ER_IRQn);
   /* USER CODE BEGIN I2C1_MspDeInit 1 */
 
   /* USER CODE END I2C1_MspDeInit 1 */
@@ -181,6 +176,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+    /* USART1 interrupt Init */
+    HAL_NVIC_SetPriority(USART1_IRQn, 1, 0);
+    HAL_NVIC_EnableIRQ(USART1_IRQn);
   /* USER CODE BEGIN USART1_MspInit 1 */
 
   /* USER CODE END USART1_MspInit 1 */

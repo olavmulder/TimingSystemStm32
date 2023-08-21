@@ -7,42 +7,22 @@
 
 
 #include "uart_communication.h"
-#define MESSAGE_LENGTH 9
-/*
-typedef struct UARTBuffer
-{
-	char *buf[MESSAGE_LENGTH];
-	size_t len;
-};
-UARTBuffer uart1Buffer;
-AddBuffer(char buf)
-{
-	static tempIndex = 0;
-	if(uart1Buffer)
-	{
-		uart1Buffer->buf = (char*)realloc(uart1Buffer->buf,
-							(sizeof(char*[MESSAGE_LENGTH])*uart1Buffer.len) + \
-							sizeof(char*[9]));
-		uart1Buffer.len++;
-	}
-	else
-	{
-		uart1Buffer->buf = (char*)malloc(sizeof(char*[9]));
-		uart1Buffer->(buf[0]) = buf;
-		uart1Buffer.len = 1;
 
-	}
+extern size_t uart1Bufferindex;
+extern uint8_t uart1Buffer[USART_BUFFER_SIZE];
+extern volatile bool uart1ReadBuffer;
+void HandleBuffer()
+{
+	//tf mini zooi;
+	//copy data
+	size_t len = strlen(uart1Buffer);
+	char dataToUse[len];
+	memcpy(dataToUse, uart1Buffer, len);
+	//rest buffer
+	memset(uart1Buffer, '\0', sizeof(uart1Buffer));
+	uart1Bufferindex = 0;
+	uart1ReadBuffer = false;
 }
-HandleUART()
-{
 
-	while(1)
-	{
-		if(uart1Received == true)
-		{
 
-			uart1Received = false;
-		}
-	}
 
-}*/

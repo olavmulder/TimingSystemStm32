@@ -10,7 +10,6 @@
 
 #include "stm32f1xx_hal.h"
 #include "ssd1306/ssd1306.h"
-#include "cmsis_os.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -44,36 +43,11 @@
 I2C_HandleTypeDef hi2c1;
 
 UART_HandleTypeDef huart1;
-
-/* Definitions for defaultTask */
-osThreadId_t defaultTaskHandle;
-const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
-/* Definitions for myTimer01 */
-osTimerId_t myTimer01Handle;
-const osTimerAttr_t myTimer01_attributes = {
-  .name = "myTimer01"
-};
+size_t uart1Bufferindex;
+uint8_t uart1Buffer[USART_BUFFER_SIZE];
+volatile bool uart1ReadBuffer;
 /* USER CODE BEGIN PV */
-const osThreadAttr_t displayTask_attributes = {
-  .name = "displayTask",
-  .stack_size = 1024,
-  .priority = (osPriority_t) osPriorityNormal4,
-};
-const osThreadAttr_t uartTask_attributes = {
-  .name = "uartTask",
-  .stack_size = 512,
-  .priority = (osPriority_t) osPriorityNormal5,
-};
 
-const osThreadAttr_t dataHandlingTask_attributes = {
-  .name = "dataHandlingTask",
-  .stack_size = 1024,
-  .priority = (osPriority_t) osPriorityHigh5,
-};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -81,12 +55,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART1_UART_Init(void);
-void StartDefaultTask(void *argument);
-void Callback01(void *argument);
-
-static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -101,7 +70,6 @@ static void MX_NVIC_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -123,9 +91,6 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_USART1_UART_Init();
-
-  /* Initialize interrupts */
-  MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
   ssd1306_Init();
   ssd1306_Reset();
@@ -140,55 +105,6 @@ int main(void)
   HAL_UART_Transmit(&huart1, (uint8_t *) _out, strlen(_out), 10);
   /* USER CODE END 2 */
 
-  /* Init scheduler */
-  osKernelInitialize();
-
-  /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
-
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
-
-  /* Create the timer(s) */
-  /* creation of myTimer01 */
-  myTimer01Handle = osTimerNew(Callback01, osTimerPeriodic, NULL, &myTimer01_attributes);
-
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
-
-  /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
-
-  /* Create the thread(s) */
-  /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
-
-  /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-  //loop threads
-  osThreadId_t displayTask = osThreadNew(DisplayTask, NULL, &displayTask_attributes);
-  //osThreadId_t uartTask = osThreadNew(UART_Task, NULL, &uartTask_attributes);
-  //osThreadId_t dataHandlingTask = osThreadNew(DataHandling_Task, NULL, &dataHandlingTask_attributes);
-  if(displayTask== NULL /*|| uartTask == NULL || dataHandlingTask*/)
-  {
-	  return 0;
-  }
-  //osThreadId_t buttonTask = osThreadNew(ButtonTask, NULL, &buttonTask_attributes);
-  /* USER CODE END RTOS_THREADS */
-
-  /* USER CODE BEGIN RTOS_EVENTS */
-  /* add events, ... */
-
-  /* USER CODE END RTOS_EVENTS */
-
-  /* Start scheduler */
-  osKernelStart();
-
-  /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
@@ -197,6 +113,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  if(uart1ReadBuffer)
+	  {
+		  HandleBuffer();
+	  }
+	 //HAL_UART_Receive (&huart1, (uint8_t*)UART1_rxBuffer, 12, 10000);  // receive 4 by
   }
   /* USER CODE END 3 */
 }
@@ -238,6 +159,7 @@ void SystemClock_Config(void)
 }
 
 /**
+<<<<<<< HEAD
   * @brief NVIC Configuration.
   * @retval None
   */
@@ -258,6 +180,8 @@ static void MX_NVIC_Init(void)
 }
 
 /**
+=======
+>>>>>>> feature/UARTCommunication
   * @brief I2C1 Initialization Function
   * @param None
   * @retval None
@@ -319,7 +243,7 @@ static void MX_USART1_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART1_Init 2 */
-
+  USART1->CR1 |= (USART_CR1_TE | USART_CR1_RXNEIE | USART_CR1_RE | USART_CR1_UE);
   /* USER CODE END USART1_Init 2 */
 
 }
@@ -346,8 +270,10 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+
 /* USER CODE END 4 */
 
+<<<<<<< HEAD
 /* USER CODE BEGIN Header_StartDefaultTask */
 /**
   * @brief  Function implementing the defaultTask thread.
@@ -375,6 +301,8 @@ void Callback01(void *argument)
   /* USER CODE END Callback01 */
 }
 
+=======
+>>>>>>> feature/UARTCommunication
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None

@@ -8,12 +8,13 @@
 #ifndef INC_UART_COMMUNICATION_H_
 #define INC_UART_COMMUNICATION_H_
 
-#include "cmsis_os.h"
 #include "stm32f1xx_it.h"
 #include "display.h"
 #include <string.h>
 
-extern char uart1Buf[10];
-extern volatile bool uart1Received;
+#define USART_BUFFER_SIZE	100
+
+void HandleBuffer();
+
 
 #endif /* INC_UART_COMMUNICATION_H_ */
