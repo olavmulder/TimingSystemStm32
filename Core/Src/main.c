@@ -160,29 +160,6 @@ void SystemClock_Config(void)
 }
 
 /**
-<<<<<<< HEAD
-  * @brief NVIC Configuration.
-  * @retval None
-  */
-static void MX_NVIC_Init(void)
-{
-  /* USART1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(USART1_IRQn);
-  /* I2C1_EV_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(I2C1_EV_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(I2C1_EV_IRQn);
-  /* I2C1_ER_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(I2C1_ER_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(I2C1_ER_IRQn);
-  /* RCC_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(RCC_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(RCC_IRQn);
-}
-
-/**
-=======
->>>>>>> feature/UARTCommunication
   * @brief I2C1 Initialization Function
   * @param None
   * @retval None
@@ -274,36 +251,6 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE END 4 */
 
-<<<<<<< HEAD
-/* USER CODE BEGIN Header_StartDefaultTask */
-/**
-  * @brief  Function implementing the defaultTask thread.
-  * @param  argument: Not used
-  * @retval None
-  */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument)
-{
-  /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-  for(;;)
-  {
-		//HAL_UART_Receive_IT(&huart1, (uint8_t*)uart1Buf, sizeof(uart1Buf));
-
-  }
-  /* USER CODE END 5 */
-}
-
-/* Callback01 function */
-void Callback01(void *argument)
-{
-  /* USER CODE BEGIN Callback01 */
-
-  /* USER CODE END Callback01 */
-}
-
-=======
->>>>>>> feature/UARTCommunication
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None
