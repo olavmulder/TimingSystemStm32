@@ -103,11 +103,12 @@ int main(void)
   //test_tf();
   char _out[] = "start";
   HAL_UART_Transmit(&huart1, (uint8_t *) _out, strlen(_out), 10);
+  if(ShowUI() < 0)return -1;
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
   while (1)
   {
     /* USER CODE END WHILE */
