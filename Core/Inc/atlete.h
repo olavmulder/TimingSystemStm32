@@ -27,12 +27,16 @@ struct _atlete
 	Atlete *nPtr;
 };
 
+extern int8_t currentIncomingRunner;
+extern int8_t currentOutgoingRunner;
+
 
 int InitAtlete(char* name);
 int AtleteAdd(char* name);
 int AtleteSetData(int8_t id, double *speed, double *distance, size_t len);
 Atlete *AtleteGetHead();
 char* ShowAtlete();
+char* GetAtleteNameByNumber(int8_t num);
 
 void test_atlete();
 #endif /* INC_ATLETE_H_ */

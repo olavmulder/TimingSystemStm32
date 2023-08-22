@@ -82,7 +82,9 @@ void StartDefaultTask(void *argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+//number of atlete where the data will be assigned to.
+int8_t currentIncomingRunner = -1;
+int8_t currentOutgoingRunner = -1;
 /* USER CODE END 0 */
 
 /**

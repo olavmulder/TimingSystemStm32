@@ -8,17 +8,25 @@
 
 #include "uart_communication.h"
 
-#define STRING_LENGTH 25
-char menuOptionString[3][STRING_LENGTH] =
-{
-		"\r Menu \r",
-		"1: Make new atlete\r",
-		"2: Show all atletes\r"
-};
-char menuResponse[1][20] =
-{
-		"type name: "
 
+#define STRING_LENGTH 30
+char menuOptionString[8][STRING_LENGTH] =
+{
+		"\r --Menu-- \r",
+		"1: Make new atlete\r",
+		"2: Show all atletes\r",
+		"3: Select incoming runner\r",
+		"4: Select outgoing runner\r",
+		"5: Start incoming runner\r",
+		"6: Start outgoing runner\r",
+		"7: Show exchange data\r"
+
+};
+char menuResponse[3][STRING_LENGTH] =
+{
+		"type name: ",
+		"type incoming number: ",
+		"type outgoing number: "
 };
 
 extern size_t uart1Bufferindex;
@@ -81,7 +89,11 @@ int MenuAction(char* msg)
 int HandleMenuAnswere(char *msg)
 {
 
-	int res;
+	int res = 0;
+	char *name = NULL;
+	int8_t num = -1;
+	char retmsg[50];
+
 	switch(menuoption)
 	{
 	case MakeNewAtlete:
@@ -91,6 +103,36 @@ int HandleMenuAnswere(char *msg)
 		else
 			res =  AtleteAdd(msg);
 
+		break;
+	case SelectIncoming:
+		num = (int8_t)atoi(msg);
+
+		if((name = GetAtleteNameByNumber(num)) == NULL)
+		{
+			//send error
+			HAL_UART_Transmit(&huart1, (uint8_t *)"NOT A VALID NUMBER\r",
+								strlen("NOT A VALID NUMBER\r"), 1000);
+			res = -1;
+			break;
+		}
+
+		snprintf(retmsg, 50, "%d:%s selected as incoming", num, name);
+		HAL_UART_Transmit(&huart1, (uint8_t *)retmsg, strlen(retmsg), 1000);
+		currentIncomingRunner = num;
+		break;
+	case SelectOutgoing:
+		num = (int8_t)atoi(msg);
+		if((name = GetAtleteNameByNumber(num)) == NULL)
+		{
+			//send error
+			HAL_UART_Transmit(&huart1, (uint8_t *)"NOT A VALID NUMBER\r",
+								strlen("NOT A VALID NUMBER\r"), 1000);
+			break;
+		}
+
+		snprintf(retmsg, 50, "%d:%s selected as outgoing", num, name);
+		HAL_UART_Transmit(&huart1, (uint8_t *)retmsg, strlen(retmsg), 1000);
+		currentIncomingRunner = num;
 		break;
 	default:
 		return -1;
@@ -118,6 +160,36 @@ int HandleMenuOption(char* msg)
 			return -1;
 		HAL_UART_Transmit(&huart1, (uint8_t *)str, strlen(str), 1000);
 		free(str);
+		ShowUI();
+		menuState = GetMenuOption;
+	}
+	else if(strcmp(msg, "3\r") == 0)
+	{
+		//select incoming runner
+		HAL_UART_Transmit(&huart1, (uint8_t *)menuResponse[1] , strlen(menuResponse[1]), 1000);
+		menuState = GetAnswere;
+		menuoption = SelectIncoming;
+	}
+	else if(strcmp(msg, "4\r") == 0)
+	{
+		//select outgoing runner
+		HAL_UART_Transmit(&huart1, (uint8_t *)menuResponse[2] , strlen(menuResponse[2]), 1000);
+		menuState = GetAnswere;
+		menuoption = SelectOutgoing;
+	}
+	else if(strcmp(msg, "5\r") == 0)
+	{
+		//start incoming runner....
+	}
+	else if(strcmp(msg, "6\r") == 0)
+	{
+		//start outgoing runner.....
+	}
+	else if(strcmp(msg, "7\r") == 0)
+	{
+		//show exchange data
+
+
 		ShowUI();
 		menuState = GetMenuOption;
 	}

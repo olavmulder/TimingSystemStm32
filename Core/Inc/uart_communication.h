@@ -20,7 +20,9 @@
 typedef enum _menuOption MenuOptions;
 enum _menuOption
 {
-	MakeNewAtlete, ShowAllAtletes
+	MakeNewAtlete, ShowAllAtletes, SelectIncoming,
+	SelectOutgoing, StartIncoming, StartOutgoing,
+	ShowExchangeData
 };
 
 typedef enum _menuState MenuState;

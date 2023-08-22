@@ -111,6 +111,19 @@ char* ShowAtlete()
 	}
 	return str;
 }
+char* GetAtleteNameByNumber(int8_t num)
+{
+	Atlete *temp = headAtlete;
+	while(temp != NULL)
+	{
+		if(temp->id == num)
+		{
+			return temp->name;
+		}
+		temp = temp->nPtr;
+	}
+	return NULL;
+}
 void test_show_all()
 {
 	char* res = ShowAtlete();
