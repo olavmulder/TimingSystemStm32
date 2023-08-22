@@ -11,66 +11,13 @@
  * Do all calcualtions with given input
  * @return
  */
-/*
-int CalculateRelay(){
-	Atlete atleteIn = {
-			.name = "empty",
-			.speed = NULL,
-			.len = 0
-	};
-	Atlete atleteOut= {
-			.name = "empty",
-			.speed = NULL,
-			.len = 0
-	};
-	static uint8_t number = 0; //amount times this function is called
-	if(number == 0)
-	{
-		if(RelaySetSpeed(&atleteIn) < 0)
-		{
-			return -1;
-		}
-		//RelaySetSpeedForDistance();
-		//free(atleteIn->speed);
 
-	}
-	else if(number == 1)
-	{
-		if(RelaySetSpeed(&atleteOut) < 0)
-			return -1;
+int CalculateRelay()
+{
+	Atlete incoming;
+	Atlete outgoing;
 
-		//are both really set
-		if(atleteIn.speed == NULL || atleteOut.speed == NULL)
-			return -1;
-
-		//both set, now calculate crosspoint
-		int cross = RelayFindCrossPoint(&atleteIn, &atleteOut);
-		if(cross < 0)
-		{
-			return -1;
-		}
-		double timeAframe = 1.0/1000.0;//temp
-		double crossDistance;
-		//if cross index is lager than the
-		if(cross < atleteIn.len)
-		{
-			//returned cross ponit is from incoming atlete
-			//cross point determined, so find time to reach that point for each runner
-			crossDistance = GetDistanceToPoint(cross, timeAframe, atleteIn);
-		}
-		else
-		{
-			//returned crosspoint is from outgoing atlete
-			crossDistance = GetDistanceToPoint(cross, timeAframe, atleteOut);
-		}
-	}
-
-	number ++;
-	if(number == 2) number = 0;
-
-	return 0;
 }
-*/
 
 /**
  * set the speed & distance array in atlete struct
