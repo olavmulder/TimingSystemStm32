@@ -120,7 +120,7 @@ int main(void)
   //this test does work
 
   /*place test there*/
-  test_relay();
+  //test_relay();
   //test_Data(); //valid
   //test_tf();
 

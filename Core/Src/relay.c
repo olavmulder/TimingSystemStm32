@@ -12,17 +12,10 @@
  * @return
  */
 
-int CalculateRelay()
-{
-	Atlete incoming;
-	Atlete outgoing;
-
-}
-
 /**
  * set the speed & distance array in atlete struct
  */
-int RelaySetSpeed(Atlete *atlete)
+/*int RelaySetSpeed(Atlete *atlete)
 {
 	size_t len = 0;
 	DataGetLen(&len);
@@ -35,7 +28,7 @@ int RelaySetSpeed(Atlete *atlete)
 	{
 		return -1;
 	}
-}
+}*/
 
 
 /**
@@ -43,14 +36,16 @@ int RelaySetSpeed(Atlete *atlete)
  *return -1, no array init
  *return -2 no crosspoint
  */
+
+/*
 double RelayFindCrossPoint(Atlete *in, Atlete *out)
 {
 	if(in == NULL || out == NULL)
 	{
 		return -1;
 	}
-	/*take outgoing runner, and compare its speed at distance x
-	to speed at distance of incoming runner*/
+	//take outgoing runner, and compare its speed at distance x
+	//to speed at distance of incoming runner
 	bool found = false;
 	size_t indexOutrunner = 0;
 	size_t indexInrunner = 0;
@@ -63,9 +58,9 @@ double RelayFindCrossPoint(Atlete *in, Atlete *out)
 		tempDistance += out->distance[indexOutrunner];
 		do
 		{
-			/*find index in incoming runner where the
-			total distance is equal to the outgoing runner
-			*/
+			//find index in incoming runner where the
+			//total distance is equal to the outgoing runner
+
 			inDistance += in->distance[indexInrunner];
 			indexInrunner++;
 		}while(tempDistance > inDistance);
@@ -83,6 +78,7 @@ double RelayFindCrossPoint(Atlete *in, Atlete *out)
 	//return the  distance that was ran by the outgoing runner
 	return tempDistance;
 }
+*/
 
 /**
  * exchangeFrmae = frame where the exchange needs to be done.
@@ -90,7 +86,7 @@ double RelayFindCrossPoint(Atlete *in, Atlete *out)
  * speed= array of speed
  * len  = length of speed array
  */
-double GetDistanceToPoint(size_t exchangeFrame, double timeAframe, Atlete* atlete)
+/*double GetDistanceToPoint(size_t exchangeFrame, double timeAframe, Atlete* atlete)
 {
 	double totalTime = 0;
 	double totalDistance = 0;
@@ -102,7 +98,7 @@ double GetDistanceToPoint(size_t exchangeFrame, double timeAframe, Atlete* atlet
 	return totalDistance;
 }
 
-
+*/
 double DataFindTakeOffPoint(double exchangePoint, double* timeIn, double* timeOut,
 						double* speedIn, double* speedOut, size_t len)
 {
@@ -128,7 +124,7 @@ double DataFindTakeOffPoint(double exchangePoint, double* timeIn, double* timeOu
 	/*s = v * t*/
 	//return distanceAhead;
 }
-
+/*
 double DataFindCallPoint(double time, double speedAtExchange, double exchangePoint)
 {
 	//exchanhgePoint - (s(distance) = v(speed) * t(time) )
@@ -179,4 +175,4 @@ void test_relay()
 {
 	test_setspeed();
 	test_cross_point();
-}
+}*/
