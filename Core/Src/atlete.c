@@ -8,6 +8,8 @@
 Atlete *headAtlete;
 Atlete *tailAtlete;
 static uint8_t atleteId = 0;
+Atlete *AtleteGetHead(){return headAtlete;}
+
 int InitAtlete(char* name)
 {
 
@@ -87,7 +89,34 @@ int AtleteSetData(int8_t id, double *speed, double *distance, size_t len)
 	}
 	return -1;
 }
+char* ShowAtlete()
+{
+	const size_t len = NAME_LENGTH+5;
+	size_t totalLenght = len;
+	char *str = (char*)malloc(len);
+	memset(str, '\0', len);
 
+	Atlete *temp = headAtlete;
+	if(temp == NULL)
+		return NULL;
+	while(temp != NULL)
+	{
+		char tempStr[len];
+		memset(tempStr, '\0', len);
+		snprintf(tempStr, sizeof(tempStr), "%d:%s\n", temp->id, temp->name);
+		strcat(str, tempStr);
+		totalLenght += len;
+		str = (char*)realloc(str, totalLenght);
+		temp = temp->nPtr;
+	}
+	return str;
+}
+void test_show_all()
+{
+	char* res = ShowAtlete();
+	assert(strlen(res) == strlen("0:Olav\n1:Sven\n"));
+	assert(strcmp("0:Olav\n1:Sven\n", res) == 0);
+}
 void test_initAtlete()
 {
 	assert(InitAtlete(NULL) == -1);
@@ -120,4 +149,5 @@ void test_atlete()
 	test_initAtlete();
 	test_ateletesetdata();
 	test_addatlete();
+	test_show_all();
 }

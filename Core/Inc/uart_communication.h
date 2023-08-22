@@ -12,13 +12,29 @@
 #include "cmsis_os.h"
 
 #include "display.h"
+#include "relay.h"
 #include <string.h>
 
 #define USART_BUFFER_SIZE	100
 
+typedef enum _menuOption MenuOptions;
+enum _menuOption
+{
+	MakeNewAtlete, ShowAllAtletes
+};
+
+typedef enum _menuState MenuState;
+enum _menuState
+{
+	GetAnswere, GetMenuOption
+};
+
 void UARTTask();
 int HandleBuffer();
 int MenuAction(char* msg);
+int HandleMenuOption(char* msg);
+int HandleMenuAnswere(char *msg);
+
 int ShowUI();
 
 

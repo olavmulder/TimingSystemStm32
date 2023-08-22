@@ -116,11 +116,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
   ssd1306_Init();
   ssd1306_Reset();
-
+  ShowUI();
   //this test does work
 
   /*place test there*/
-  test_atlete();
+  //test_atlete();
   //test_relay();
   //test_Data(); //valid
   //test_tf();

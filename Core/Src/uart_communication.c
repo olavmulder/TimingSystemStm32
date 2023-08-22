@@ -8,10 +8,17 @@
 
 #include "uart_communication.h"
 
-typedef enum _menuState MenuState;
-enum _menuState
+#define STRING_LENGTH 25
+char menuOptionString[3][STRING_LENGTH] =
 {
-	GetAnswere, GetMenuOption
+		"\r Menu \r",
+		"1: Make new atlete\r",
+		"2: Show all atletes\r"
+};
+char menuResponse[1][20] =
+{
+		"type name: "
+
 };
 
 extern size_t uart1Bufferindex;
@@ -20,7 +27,7 @@ extern volatile bool uart1ReadBuffer;
 extern UART_HandleTypeDef huart1;
 
 static MenuState menuState = GetMenuOption;
-static uint8_t menuoption = 0;
+static MenuOptions menuoption = MakeNewAtlete;
 
 void UARTTask()
 {
@@ -59,10 +66,10 @@ int MenuAction(char* msg)
 	switch(menuState)
 	{
 		case GetAnswere:
-			HandleMenuAnswere(msg);
+			return HandleMenuAnswere(msg);
 			break;
 		case GetMenuOption:
-			HandleMenuOption(msg);
+			return HandleMenuOption(msg);
 			break;
 		default:
 			return -1;
@@ -73,42 +80,49 @@ int MenuAction(char* msg)
 
 int HandleMenuAnswere(char *msg)
 {
+
+	int res;
 	switch(menuoption)
 	{
-	case 1:
-		//incoming name
+	case MakeNewAtlete:
+
+		if(AtleteGetHead() == NULL)
+			res =  InitAtlete(msg);
+		else
+			res =  AtleteAdd(msg);
 
 		break;
-	case 2:
-		//outgoing name
-		break;
-	case 3:
-		//show result
+	default:
+		return -1;
 	}
+	menuState = GetMenuOption;
+	ShowUI();
+
+	return res;
 }
 int HandleMenuOption(char* msg)
 {
 	if(strcmp(msg, "1\r") == 0)
 	{
-		//incoming runner
-		char *str = "type name incoming runner";
-		HAL_UART_Transmit(&huart1, (uint8_t *)str , strlen(str), 1000);
+		//Make new atlete
+		HAL_UART_Transmit(&huart1, (uint8_t *)menuResponse[0] , strlen(menuResponse[0]), 1000);
 		menuState = GetAnswere;
-		menuoption = 1;
+		menuoption = MakeNewAtlete;
 	}
 	else if(strcmp(msg, "2\r") == 0)
 	{
-		//outgoing runner
-		menuState = GetAnswere;
-		menuoption = 2;
-	}
-	else if(strcmp(msg, "3\r") == 0)
-	{
-		//show result
-		menuState = GetAnswere;
-		menuoption = 3;
+		if(AtleteGetHead() == NULL)
+			return -1;
+		char* str = ShowAtlete();
+		if(str == NULL)
+			return -1;
+		HAL_UART_Transmit(&huart1, (uint8_t *)str, strlen(str), 1000);
+		free(str);
+		ShowUI();
+		menuState = GetMenuOption;
 	}
 	else
+
 	{
 		char ret[] = "Not a valid option, try again\n\r";
 		if(HAL_UART_Transmit(&huart1, (uint8_t *)ret , strlen(ret), 1000) != HAL_OK)
@@ -116,29 +130,17 @@ int HandleMenuOption(char* msg)
 			return -1;
 		}
 	}
-	if(ShowUI() < 0)
-		return -1;
 	return 0;
 }
 int ShowUI()
 {
-	//menu
-	const char one[] = "1: Start incoming runner\n\r";
-	const char two[] = "2: Start outgoing runner\n\r";
-	const char three[] = "3: show result\n\r";
-	//make buffer
-	char* msg;
-	size_t len = sizeof(one)+ sizeof(two)+sizeof(three)+1;
-	msg = (char*)malloc(len);
-	if(msg == NULL)
-		return -1;
-	snprintf(msg, len, "%s%s%s", one, two, three);
-	if(HAL_UART_Transmit(&huart1, (uint8_t *) msg, strlen(msg), 1000) != HAL_OK)
+	for(size_t i = 0; i < sizeof(menuOptionString) / STRING_LENGTH;i++)
 	{
-		free(msg);
-		return -1;
+		if(HAL_UART_Transmit(&huart1, (uint8_t *) menuOptionString[i], strlen(menuOptionString[i]), 1000) != HAL_OK)
+		{
+			return -1;
+		}
 	}
-	free(msg);
 	return 0;
 }
 

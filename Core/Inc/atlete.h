@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 
 #define NAME_LENGTH 20
 
@@ -30,6 +31,8 @@ struct _atlete
 int InitAtlete(char* name);
 int AtleteAdd(char* name);
 int AtleteSetData(int8_t id, double *speed, double *distance, size_t len);
+Atlete *AtleteGetHead();
+char* ShowAtlete();
 
 void test_atlete();
 #endif /* INC_ATLETE_H_ */
