@@ -17,7 +17,7 @@
 #define USART_BUFFER_SIZE	100
 
 void UARTTask();
-void HandleBuffer();
+int HandleBuffer();
 int MenuAction(char* msg);
 int ShowUI();
 

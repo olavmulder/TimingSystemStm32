@@ -191,7 +191,6 @@ void USART1_IRQHandler(void)
   /* USER CODE BEGIN USART1_IRQn 0 */
 	char ch;
   /* USER CODE END USART1_IRQn 0 */
-  HAL_UART_IRQHandler(&huart1);
   /* USER CODE BEGIN USART1_IRQn 1 */
 	uint32_t isrflags   = READ_REG(huart1.Instance->SR);
 	uint32_t cr1its     = READ_REG(huart1.Instance->CR1);

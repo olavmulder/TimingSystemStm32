@@ -62,8 +62,8 @@ const osThreadAttr_t displayTask_attributes = {
 osThreadId_t uartTaskHandle;
 const osThreadAttr_t uartTask_attributes = {
   .name = "uartTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityRealtime,
+  .stack_size = 254 * 4,
+  .priority = (osPriority_t) osPriorityHigh5,
 };
 size_t uart1Bufferindex;
 uint8_t uart1Buffer[USART_BUFFER_SIZE];
@@ -120,6 +120,7 @@ int main(void)
   //this test does work
 
   /*place test there*/
+  test_atlete();
   //test_relay();
   //test_Data(); //valid
   //test_tf();
@@ -153,6 +154,10 @@ int main(void)
   /* add threads, ... */
   displayTaskHandle = osThreadNew(DisplayTask, NULL, &displayTask_attributes);
   uartTaskHandle    = osThreadNew(UARTTask, NULL, &uartTask_attributes);
+  if(displayTaskHandle == NULL || uartTaskHandle == NULL)
+  {
+	  return -1;
+  }
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -170,7 +175,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	 //HAL_UART_Receive (&huart1, (uint8_t*)UART1_rxBuffer, 12, 10000);  // receive 4 by
   }
   /* USER CODE END 3 */
 }

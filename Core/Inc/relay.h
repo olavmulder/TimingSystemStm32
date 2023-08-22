@@ -12,6 +12,7 @@
 #define DISTANCE_EXCHANGE_ZONE 30
 
 #include "data.h"
+#include "atlete.h"
 
 
 /*double GetDistanceToPoint(size_t exchangeFrame, double timeAframe, Atlete* atlete);
