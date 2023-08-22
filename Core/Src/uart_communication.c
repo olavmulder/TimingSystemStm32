@@ -26,7 +26,8 @@ char menuResponse[3][STRING_LENGTH] =
 {
 		"type name: ",
 		"type incoming number: ",
-		"type outgoing number: "
+		"type outgoing number: ",
+
 };
 
 extern size_t uart1Bufferindex;
@@ -58,10 +59,8 @@ int HandleBuffer()
 	char dataToUse[len];
 	memset(dataToUse, '\0', len);
 	memcpy(dataToUse, uart1Buffer, len);
-	if(MenuAction(dataToUse) < 0)
-	{
-		return -1;
-	}
+	MenuAction(dataToUse);
+
 	//rest buffer
 	memset(uart1Buffer, '\0', sizeof(uart1Buffer));
 	uart1Bufferindex = 0;
@@ -80,7 +79,6 @@ int MenuAction(char* msg)
 			return HandleMenuOption(msg);
 			break;
 		default:
-			return -1;
 			break;
 	};
 	return 0;
@@ -115,10 +113,16 @@ int HandleMenuAnswere(char *msg)
 			res = -1;
 			break;
 		}
-
-		snprintf(retmsg, 50, "%d:%s selected as incoming", num, name);
-		HAL_UART_Transmit(&huart1, (uint8_t *)retmsg, strlen(retmsg), 1000);
-		currentIncomingRunner = num;
+		if(num != currentOutgoingRunner)
+		{
+			currentIncomingRunner = num;
+			snprintf(retmsg, 50, "%d:%s selected as incoming", num, name);
+			HAL_UART_Transmit(&huart1, (uint8_t *)retmsg, strlen(retmsg), 1000);
+		}
+		else{
+			snprintf(retmsg, 50, "number is same as incoming runner, try again\r");
+			HAL_UART_Transmit(&huart1, (uint8_t *)retmsg, strlen(retmsg), 1000);
+		}
 		break;
 	case SelectOutgoing:
 		num = (int8_t)atoi(msg);
@@ -130,9 +134,16 @@ int HandleMenuAnswere(char *msg)
 			break;
 		}
 
-		snprintf(retmsg, 50, "%d:%s selected as outgoing", num, name);
-		HAL_UART_Transmit(&huart1, (uint8_t *)retmsg, strlen(retmsg), 1000);
-		currentIncomingRunner = num;
+		if(num != currentIncomingRunner)
+		{
+			currentOutgoingRunner = num;
+			snprintf(retmsg, 50, "%d:%s selected as outgoing", num, name);
+			HAL_UART_Transmit(&huart1, (uint8_t *)retmsg, strlen(retmsg), 1000);
+		}
+		else{
+			snprintf(retmsg, 50, "number is same as outgoing runner, try again\r");
+			HAL_UART_Transmit(&huart1, (uint8_t *)retmsg, strlen(retmsg), 1000);
+		}
 		break;
 	default:
 		return -1;
@@ -153,13 +164,13 @@ int HandleMenuOption(char* msg)
 	}
 	else if(strcmp(msg, "2\r") == 0)
 	{
-		if(AtleteGetHead() == NULL)
-			return -1;
 		char* str = ShowAtlete();
-		if(str == NULL)
-			return -1;
-		HAL_UART_Transmit(&huart1, (uint8_t *)str, strlen(str), 1000);
-		free(str);
+		if(str != NULL)
+		{
+			HAL_UART_Transmit(&huart1, (uint8_t *)str, strlen(str), 1000);
+			free(str);
+		}else
+			HAL_UART_Transmit(&huart1, (uint8_t *)"empty...", strlen("empty..."), 1000);
 		ShowUI();
 		menuState = GetMenuOption;
 	}
@@ -180,15 +191,26 @@ int HandleMenuOption(char* msg)
 	else if(strcmp(msg, "5\r") == 0)
 	{
 		//start incoming runner....
+		char retmsg[100];
+		char *name = GetAtleteNameByNumber(currentIncomingRunner);
+		snprintf(retmsg, 100, "start incoming with: %s\r", name);
+
+		ShowUI();
+		menuState = GetMenuOption;
+
 	}
 	else if(strcmp(msg, "6\r") == 0)
 	{
 		//start outgoing runner.....
+		char retmsg[100];
+		char *name = GetAtleteNameByNumber(currentOutgoingRunner);
+		snprintf(retmsg, 100, "start outgoing with: %s\r", name);
+		ShowUI();
+		menuState = GetMenuOption;
 	}
 	else if(strcmp(msg, "7\r") == 0)
 	{
 		//show exchange data
-
 
 		ShowUI();
 		menuState = GetMenuOption;
