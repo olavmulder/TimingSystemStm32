@@ -12,24 +12,8 @@
 #define DISTANCE_EXCHANGE_ZONE 30
 
 #include "data.h"
+#include "Atlete.h"
 
-typedef struct _atlete Atlete;
-struct _atlete
-{
-	char name[50];
-	uint8_t id;
-	double *speed;
-	double *distance;
-	size_t len;
-};
-
-typedef struct _exchange Exchange;
-struct _exchange
-{
-	double takeoff;
-	double call;
-	double exchange;
-};
 
 double GetDistanceToPoint(size_t exchangeFrame, double timeAframe, Atlete* atlete);
 int RelaySetSpeed(Atlete *atlete);
