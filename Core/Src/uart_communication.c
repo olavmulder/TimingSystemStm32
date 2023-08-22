@@ -12,11 +12,22 @@ extern size_t uart1Bufferindex;
 extern uint8_t uart1Buffer[USART_BUFFER_SIZE];
 extern volatile bool uart1ReadBuffer;
 extern UART_HandleTypeDef huart1;
+
+void UARTTask()
+{
+	while(1)
+	{
+		if(uart1ReadBuffer)
+		{
+		  HandleBuffer();
+		}
+		osDelay(20);
+	}
+}
 void HandleBuffer()
 {
-	//tf mini zooi;
 	//copy data
-	size_t len = strlen(uart1Buffer);
+	size_t len = strlen((char*)uart1Buffer);
 	char dataToUse[len];
 	memcpy(dataToUse, uart1Buffer, len);
 	MenuAction(dataToUse);

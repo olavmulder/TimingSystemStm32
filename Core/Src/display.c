@@ -1,73 +1,64 @@
 /*
  * display.c
- *
  *  Created on: Jul 19, 2023
- *      Author: olav
+ *      Author: Olav
  */
 
 #include "../Inc/display.h"
 
-char atlete_incoming_name[20];
-char atlete_outgoing_name[20];
 
-/*void DisplayTask(void* pvParamters)
+void DisplayTask(void* pvParamters)
 {
+	const uint8_t hz = 10;
 	while(1)
 	{
 		DisplayAll();
 		//show i on display
 		ssd1306_UpdateScreen();
+		osDelay(1000);
 	}
-}*/
+}
+
 void DisplayAll()
 {
-	DisplayAtlete(INCOMMING_RUNNER);
-	DisplayAtlete(OUTGOING_RUNNER);
+	DisplayAtlete();
+	DisplayExchangeData();
 }
-void DisplayAtlete(Type_Runner type)
+
+void DisplayExchangeData()
+{
+	const uint8_t position = 30;
+	char str[3][20] = {
+			"Exchange at: ",
+			"Take off at: ",
+			"Call at: "
+	};
+	const uint8_t multiIndex = 10;
+	for(uint8_t i = 0; i < sizeof(str) / (sizeof(char)*20); i++)
+	{
+
+		ssd1306_SetCursor(2,position+(multiIndex*i));
+		ssd1306_WriteString(&str[i][0], Font_7x10 , Black);
+	}
+}
+void DisplayAtlete()
 {
 	//GetAtletes:
+	const uint8_t position = 0;
+	const uint8_t multiIndex = 10;
+
 	char string[50];
-	if(type == INCOMMING_RUNNER)
+	char name[2][20] =
 	{
-		strcpy(string, atlete_incoming_name);
-		strcat(string, ": ");
-		char timeString[10];
-		if(DisplayTime(timeString, 9.58) != 0)
-		{
-			ssd1306_SetCursor(2, 75);
-			ssd1306_WriteString("Error in DisplayTime", Font_7x10 , Black);
-			return;
-		}
-		strcat(string, timeString);
-		ssd1306_SetCursor(2,0);
-	}
-	else
+			"in: name",
+			"out: name",
+	};
+	for(uint8_t i = 0; i < 2;i++)
 	{
-		strcpy(string, atlete_outgoing_name);
-		strcat(string, ": ");
-		char timeString[10];
-		if(DisplayTime(timeString, 10.58) != 0)
-		{
-			ssd1306_SetCursor(2, 75);
-			ssd1306_WriteString("Error in DisplayTime", Font_7x10, Black);
-			return;
-		}
-		strcat(string, timeString);
-		ssd1306_SetCursor(2, 2*10);
-
+		strcpy(string, name[i]);
+		ssd1306_SetCursor(2, position+(i*multiIndex));
+		ssd1306_WriteString(&name[i][0], Font_7x10 , Black);
 	}
-	ssd1306_WriteString(string, Font_7x10, Black);
-
 }
 
-int DisplayTime(char* timeString, double time)
-{
-	if(timeString == NULL)
-		return -1;
-	if(time < 0)
-		return -1;
-	snprintf(timeString, sizeof(time), "%.3f", time);
-	return 0;
-}
 
