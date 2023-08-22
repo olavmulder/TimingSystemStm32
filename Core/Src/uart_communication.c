@@ -30,6 +30,8 @@ int MenuAction(char* msg)
 	if(strcmp(msg, "1\r") == 0)
 	{
 		//incoming runner
+		char *str = "type name incoming runner";
+		HAL_UART_Transmit(&huart1, (uint8_t *)str , strlen(str), 1000);
 	}
 	else if(strcmp(msg, "2\r") == 0)
 	{

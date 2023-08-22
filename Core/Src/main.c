@@ -114,10 +114,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if(uart1ReadBuffer)
-	  {
-		  HandleBuffer();
-	  }
 	 //HAL_UART_Receive (&huart1, (uint8_t*)UART1_rxBuffer, 12, 10000);  // receive 4 by
   }
   /* USER CODE END 3 */
