@@ -227,6 +227,7 @@ int HandleMenuOption(char* msg)
 		char *name = GetAtleteNameByNumber(currentIncomingRunner);
 		snprintf(retmsg, 100, "start incoming with: %s\r", name);
 		currentRunner = currentIncomingRunner;
+		StartContinuesMeasurement();
 		ShowUI();
 		menuState = GetMenuOption;
 
@@ -238,6 +239,7 @@ int HandleMenuOption(char* msg)
 		char *name = GetAtleteNameByNumber(currentOutgoingRunner);
 		snprintf(retmsg, 100, "start outgoing with: %s\r", name);
 		currentRunner = currentOutgoingRunner;
+		StartContinuesMeasurement();
 		ShowUI();
 		menuState = GetMenuOption;
 	}
