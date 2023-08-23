@@ -15,6 +15,8 @@
 #include "atlete.h"
 
 
+
+void ShowRelayExchange(int8_t numIncoming, int8_t numOutgoing);
 /*double GetDistanceToPoint(size_t exchangeFrame, double timeAframe, Atlete* atlete);
 int RelaySetSpeed(Atlete *atlete);
 double RelayFindCrossPoint(Atlete *in, Atlete *out);

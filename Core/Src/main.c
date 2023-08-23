@@ -156,6 +156,7 @@ int main(void)
   /* add threads, ... */
   displayTaskHandle = osThreadNew(DisplayTask, NULL, &displayTask_attributes);
   uartTaskHandle    = osThreadNew(UARTTask, NULL, &uartTask_attributes);
+
   if(displayTaskHandle == NULL || uartTaskHandle == NULL)
   {
 	  return -1;

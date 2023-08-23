@@ -44,10 +44,7 @@ void UARTTask()
 	{
 		if(uart1ReadBuffer)
 		{
-		  if(HandleBuffer() < 0)
-		  {
-			  exit(-1);
-		  }
+		  HandleBuffer();
 		}
 		osDelay(20);
 	}
@@ -211,7 +208,11 @@ int HandleMenuOption(char* msg)
 	else if(strcmp(msg, "7\r") == 0)
 	{
 		//show exchange data
-
+		char* retmsg = ShowRelayExchange(currentIncomingRunner, currentOutgoingRunner);
+		if(HAL_UART_Transmit(&huart1, (uint8_t *)retmsg , strlen(retmsg), 1000) != HAL_OK)
+		{
+			return -1;
+		}
 		ShowUI();
 		menuState = GetMenuOption;
 	}
