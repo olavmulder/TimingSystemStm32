@@ -10,7 +10,7 @@
 
 
 #define STRING_LENGTH 30
-char menuOptionString[8][STRING_LENGTH] =
+char menuOptionString[9][STRING_LENGTH] =
 {
 		"\r --Menu-- \r",
 		"1: Make new atlete\r",
@@ -19,7 +19,8 @@ char menuOptionString[8][STRING_LENGTH] =
 		"4: Select outgoing runner\r",
 		"5: Start incoming runner\r",
 		"6: Start outgoing runner\r",
-		"7: Show exchange data\r"
+		"7: Calculate exchange data\r",
+		"8: Get exchange data\r",
 
 };
 char menuResponse[3][STRING_LENGTH] =
@@ -70,6 +71,8 @@ int MenuAction(char* msg)
 	switch(menuState)
 	{
 		case GetAnswere:
+		case GetAnswere1:
+		case GetAnswere2:
 			return HandleMenuAnswere(msg);
 			break;
 		case GetMenuOption:
@@ -88,7 +91,6 @@ int HandleMenuAnswere(char *msg)
 	char *name = NULL;
 	int8_t num = -1;
 	char retmsg[50];
-
 	switch(menuoption)
 	{
 	case MakeNewAtlete:
@@ -97,7 +99,8 @@ int HandleMenuAnswere(char *msg)
 			res =  InitAtlete(msg);
 		else
 			res =  AtleteAdd(msg);
-
+		menuState = GetMenuOption;
+		ShowUI();
 		break;
 	case SelectIncoming:
 		num = (int8_t)atoi(msg);
@@ -120,6 +123,8 @@ int HandleMenuAnswere(char *msg)
 			snprintf(retmsg, 50, "number is same as incoming runner, try again\r");
 			HAL_UART_Transmit(&huart1, (uint8_t *)retmsg, strlen(retmsg), 1000);
 		}
+		menuState = GetMenuOption;
+		ShowUI();
 		break;
 	case SelectOutgoing:
 		num = (int8_t)atoi(msg);
@@ -141,13 +146,40 @@ int HandleMenuAnswere(char *msg)
 			snprintf(retmsg, 50, "number is same as outgoing runner, try again\r");
 			HAL_UART_Transmit(&huart1, (uint8_t *)retmsg, strlen(retmsg), 1000);
 		}
+		menuState = GetMenuOption;
+		ShowUI();
+		break;
+	case GetExchangeData:
+		static int8_t in = -1, out = -1;
+		if(menuState == GetAnswere1)
+		{
+			in = atoi(msg);
+			HAL_UART_Transmit(&huart1, (uint8_t *)menuResponse[2], strlen(menuResponse[2]), 1000);
+			menuState = GetAnswere2;
+		}
+		else if(menuState == GetAnswere2)
+			out = atoi(msg);
+		if(in != -1 && out != -1)
+		{
+			Exchange *ex = GetExchange(in, out);
+			if(ex == NULL)
+				HAL_UART_Transmit(&huart1, (uint8_t *)"GetExchange Error", strlen("GetExchange Error"), 1000);
+			char retmsg[100];
+			snprintf(retmsg, 100, "\n%s to %s:\ntakeoff: %.2f\nexchange: %.2f\ncallpoint: %.2f\n\n",
+						GetAtleteNameByNumber(ex->idIn), GetAtleteNameByNumber(ex->idOut),
+						ex->takeoff, ex->exchangeDistance, ex->callpoint);
+			HAL_UART_Transmit(&huart1, (uint8_t *)retmsg, strlen(retmsg), 1000);
+			in = -1;
+			out = -1;
+			ShowUI();
+
+		}
 		break;
 	default:
 		return -1;
 	}
-	menuState = GetMenuOption;
-	ShowUI();
 
+	ShowUI();
 	return res;
 }
 int HandleMenuOption(char* msg)
@@ -207,17 +239,19 @@ int HandleMenuOption(char* msg)
 	}
 	else if(strcmp(msg, "7\r") == 0)
 	{
-		//show exchange data
-		char* retmsg = ShowRelayExchange(currentIncomingRunner, currentOutgoingRunner);
-		if(HAL_UART_Transmit(&huart1, (uint8_t *)retmsg , strlen(retmsg), 1000) != HAL_OK)
-		{
-			return -1;
-		}
+		//calcualte exchange data
+		CalculateRelayExchange(currentIncomingRunner, currentOutgoingRunner);
 		ShowUI();
 		menuState = GetMenuOption;
 	}
+	else if(strcmp(msg, "8\r") == 0)
+	{
+		//get exchange data
+		HAL_UART_Transmit(&huart1, (uint8_t *)menuResponse[1] , strlen(menuResponse[1]), 1000);
+		menuState = GetAnswere1;
+		menuoption = GetExchangeData;
+	}
 	else
-
 	{
 		char ret[] = "Not a valid option, try again\n\r";
 		if(HAL_UART_Transmit(&huart1, (uint8_t *)ret , strlen(ret), 1000) != HAL_OK)

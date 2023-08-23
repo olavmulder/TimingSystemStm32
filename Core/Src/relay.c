@@ -7,22 +7,29 @@
 
 #include "../Inc/relay.h"
 
+static Exchange *headExchange = NULL;
+static Exchange *tailExchange = NULL;
+
 /**
  * Do all calcualtions with given input
  * @return
  */
-
-int ShowRelayExchange(char* returnMsg, int8_t numIncoming, int8_t numOutgoing)
+int CalculateRelayExchange(int8_t numIncoming, int8_t numOutgoing)
 {
-	//TODO callpoint time
+	//TODO callpoint time, save marge exchange point
 	double callpointTime = 0.8;
+	double safeMarge = 1.00;
+	//end-TODO
 	Atlete *in = GetAtleteByNumber(numIncoming);
 	Atlete *out= GetAtleteByNumber(numOutgoing);
 	if(in == NULL || out == NULL)
 		return -1;
 	if(in->speed == NULL || out->speed == NULL)
 		return -2;
+
 	double crossPoint = RelayFindCrossPoint(in, out);
+	crossPoint -= safeMarge;
+
 	double timeIn;
 	double timeOut;
 	if(GetTimeToPoint(in, crossPoint, &timeIn) == -1)
@@ -32,8 +39,13 @@ int ShowRelayExchange(char* returnMsg, int8_t numIncoming, int8_t numOutgoing)
 	double takeoff = DataFindTakeOffPoint(crossPoint, timeIn, timeOut,
 			in, out);
 	double callpoint = DataFindCallPoint(callpointTime, in, crossPoint);
-	//SaveExchange(in, out, takeoff, callpoint);
-
+	Exchange ex;
+	ex.takeoff = takeoff;
+	ex.callpoint = callpoint;
+	ex.exchangeDistance = crossPoint;
+	ex.idIn = in->id;
+	ex.idOut = out->id;
+	return SaveExchange(&ex);
 }
 /**
  * find crosspoint, based on both speeds of incoming and outgoing runner
@@ -99,7 +111,7 @@ int GetTimeToPoint(Atlete *atlete, double exchangeDistance,
 	*time = 0;
 	while(tempDistance < exchangeDistance)
 	{
-		tempDistance += atlete->distance[i];
+		tempDistance += atlete->distance[index];
 		*time += timeStep;
 		index++;
 		if(index >= atlete->len)
@@ -107,7 +119,7 @@ int GetTimeToPoint(Atlete *atlete, double exchangeDistance,
 	}
 	return 0;
 }
-double DataFindTakeOffPoint(double exchangePoint, double* timeIn, double* timeOut,
+double DataFindTakeOffPoint(double exchangePoint, double timeIn, double timeOut,
 						Atlete *in, Atlete *out)
 {
 	/*
@@ -121,11 +133,11 @@ double DataFindTakeOffPoint(double exchangePoint, double* timeIn, double* timeOu
 		return (-1);
 	}
 
-	double avgSpeedIn = exchangePoint / *timeIn;
-	double avgSpeedOut = exchangePoint / *timeOut;
+	double avgSpeedIn = exchangePoint / timeIn;
+	double avgSpeedOut = exchangePoint / timeOut;
 
 	double relativeSpeed = avgSpeedIn - avgSpeedOut;
-	double distanceAhead = (avgSpeedOut * *timeIn) / relativeSpeed; // meters
+	double distanceAhead = (avgSpeedOut * timeIn) / relativeSpeed; // meters
 
 	/*s = v * t*/
 	return distanceAhead;
@@ -147,3 +159,49 @@ double DataFindCallPoint(double time, Atlete *atlete, double exchangePoint)
 	double speedAtExchange = atlete->speed[index];
 	return (exchangePoint - (speedAtExchange * time));
 }
+
+
+int SaveExchange(Exchange *ex)
+{
+	if(headExchange == NULL)
+	{
+		headExchange = (Exchange*)malloc(sizeof(Exchange));
+		if(headExchange == NULL)
+			return -1;
+		tailExchange = headExchange;
+		tailExchange->callpoint = ex->callpoint;
+		tailExchange->exchangeDistance = ex->exchangeDistance;
+		tailExchange->takeoff = ex->takeoff;
+		tailExchange->idIn = ex->idIn;
+		tailExchange->idOut = ex->idOut;
+		tailExchange->nPtr = NULL;
+	}
+	else
+	{
+		Exchange *temp = (Exchange*)malloc(sizeof(Exchange));
+		if(temp == NULL)
+			return -1;
+		temp->callpoint = ex->callpoint;
+		temp->exchangeDistance = ex->exchangeDistance;
+		temp->takeoff = ex->takeoff;
+		temp->idOut = ex->idOut;
+		temp->nPtr = NULL;
+		temp->nPtr = NULL;
+		tailExchange->nPtr = temp;
+		tailExchange = temp;
+	}
+	return 0;
+}
+
+Exchange* GetExchange(int8_t idIn, int8_t idOut)
+{
+	Exchange *temp = headExchange;
+	while(temp != NULL)
+	{
+		if(temp->idIn == idIn && temp->idOut == idOut)
+			return temp;
+		temp = temp->nPtr;
+	}
+	return NULL;
+}
+

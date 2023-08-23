@@ -14,9 +14,19 @@
 #include "data.h"
 #include "atlete.h"
 
+typedef struct _exchange Exchange;
+struct _exchange
+{
+	double takeoff;
+	double callpoint;
+	double exchangeDistance;
+	int8_t idIn;
+	int8_t idOut;
+	Exchange *nPtr;
+};
 
 
-void ShowRelayExchange(int8_t numIncoming, int8_t numOutgoing);
+int CalculateRelayExchange(int8_t numIncoming, int8_t numOutgoing);
 int GetTimeToPoint(Atlete *atlete, double exchangeDistance,
 					double* time);
 double RelayFindCrossPoint(Atlete *in, Atlete *out);
@@ -24,7 +34,9 @@ double RelayFindCrossPoint(Atlete *in, Atlete *out);
 double DataFindTakeOffPoint(double exchangePoint, double timeIn, double timeOut,
 						Atlete *in, Atlete *out);
 double DataFindCallPoint(double time, Atlete* atlete, double exchangePoint);
-int GetExchange();
+
+int SaveExchange(Exchange *ex);
+Exchange* GetExchange(int8_t in, int8_t out);
 
 void test_relay();
 #endif /* INC_RELAY_H_ */

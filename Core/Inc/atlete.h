@@ -19,7 +19,7 @@
 typedef struct _atlete Atlete;
 struct _atlete
 {
-	char name[20];
+	char name[NAME_LENGTH];
 	double *speed;
 	double *distance;
 	size_t len;
@@ -37,6 +37,7 @@ int AtleteSetData(int8_t id, double *speed, double *distance, size_t len);
 Atlete *AtleteGetHead();
 char* ShowAtlete();
 char* GetAtleteNameByNumber(int8_t num);
+Atlete* GetAtleteByNumber(int8_t num);
 
 void test_atlete();
 #endif /* INC_ATLETE_H_ */

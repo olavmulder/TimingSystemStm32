@@ -5,6 +5,7 @@
 *.cfg
 *.launch
 *.ioc
+*.pdf
 #files
 .project
 .mxproject

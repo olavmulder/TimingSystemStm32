@@ -22,13 +22,13 @@ enum _menuOption
 {
 	MakeNewAtlete, ShowAllAtletes, SelectIncoming,
 	SelectOutgoing, StartIncoming, StartOutgoing,
-	ShowExchangeData
+	CalculateExchangeData, GetExchangeData
 };
 
 typedef enum _menuState MenuState;
 enum _menuState
 {
-	GetAnswere, GetMenuOption
+	GetAnswere, GetAnswere1, GetAnswere2,  GetMenuOption,
 };
 
 void UARTTask();
