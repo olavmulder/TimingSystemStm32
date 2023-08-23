@@ -82,6 +82,10 @@ const osThreadAttr_t uartDataTask_attributes = {
 size_t uart1Bufferindex;
 uint8_t uart1Buffer[USART_BUFFER_SIZE];
 volatile bool uart1ReadBuffer;
+
+size_t uart2Bufferindex;
+uint8_t uart2Buffer[USART_BUFFER_SIZE];
+volatile bool uart2ReadBuffer;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -139,7 +143,8 @@ int main(void)
 
   /*place test there*/
   //test_atlete();
-  test_relay();
+  //test_relay();
+  test_lazer();
   //test_Data(); //valid
   //test_tf();
 
@@ -331,7 +336,7 @@ static void MX_USART2_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART2_Init 2 */
-  USART2->CR2 |= (USART_CR2_TE | USART_CR2_RXNEIE | USART_CR2_RE | USART_CR2_UE);
+  USART2->CR1 |= (USART_CR1_TE | USART_CR1_RXNEIE | USART_CR1_RE | USART_CR1_UE);
   /* USER CODE END USART2_Init 2 */
 
 }

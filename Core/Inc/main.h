@@ -33,7 +33,7 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "display.h"
 #include "uart_communication.h"
-#include "tfmini.h"
+#include "lazer.h"
 #include "relay.h"
 /* USER CODE END Includes */
 
