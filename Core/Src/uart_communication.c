@@ -161,25 +161,27 @@ int HandleMenuAnswere(char *msg)
 			out = atoi(msg);
 		if(in != -1 && out != -1)
 		{
+
 			Exchange *ex = GetExchange(in, out);
 			if(ex == NULL)
 				HAL_UART_Transmit(&huart1, (uint8_t *)"GetExchange Error", strlen("GetExchange Error"), 1000);
-			char retmsg[100];
-			snprintf(retmsg, 100, "\n%s to %s:\ntakeoff: %.2f\nexchange: %.2f\ncallpoint: %.2f\n\n",
-						GetAtleteNameByNumber(ex->idIn), GetAtleteNameByNumber(ex->idOut),
-						ex->takeoff, ex->exchangeDistance, ex->callpoint);
-			HAL_UART_Transmit(&huart1, (uint8_t *)retmsg, strlen(retmsg), 1000);
+			else
+			{
+				char retmsg[100];
+				snprintf(retmsg, 100, "\n%s to %s:\ntakeoff: %.2f\nexchange: %.2f\ncallpoint: %.2f\n\n",
+							GetAtleteNameByNumber(ex->idIn), GetAtleteNameByNumber(ex->idOut),
+							ex->takeoff, ex->exchangeDistance, ex->callpoint);
+				HAL_UART_Transmit(&huart1, (uint8_t *)retmsg, strlen(retmsg), 1000);
+			}
 			in = -1;
 			out = -1;
 			ShowUI();
-
+			menuState = GetMenuOption;
 		}
 		break;
 	default:
 		return -1;
 	}
-
-	ShowUI();
 	return res;
 }
 int HandleMenuOption(char* msg)
