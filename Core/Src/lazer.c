@@ -17,22 +17,46 @@ extern volatile bool uart2ReadBuffer;
 
 void UARTDataTask()
 {
+	const double normalTime  = 1.0 / 100.0;
+	double time = normalTime;
+	double lastDistance;
 	while(1)
 	{
 		if(uart2ReadBuffer)
 		{
 			//copy data
-			size_t len = strlen((char*)uart2Buffer)+1;
-			char dataToUse[len];
-			memset(dataToUse, '\0', len);
-			memcpy(dataToUse, uart2Buffer, len);
-			//HandleData()
+			char dataToUse[9];
+			memcpy(dataToUse, uart2Buffer, 9);
+
+			double distance  = HandleData(dataToUse);
+			if(distance > MAX_MEASUREMENT_DISTANCE)
+			{
+				StopMeasurement();
+
+			}
+			//received distance
+			double tempDistance = distance;
+			//distance further away since last measurement
+			tempDistance -= lastDistance;
+			//if data is invalid, add time so distance will be dev
+			if(distance < 0)
+			{
+				time += normalTime;
+			}
+			else
+			{
+				//add data further away since last measurement
+				DataAdd(tempDistance, time);
+				time = normalTime;
+			}
+			lastDistance = distance;
 
 			//rest buffer
 			memset(uart2Buffer, '\0', sizeof(uart2Buffer));
 			uart2Bufferindex = 0;
 			uart2ReadBuffer = false;
 		}
+		osDelay(10);
 
 	}
 }
@@ -49,7 +73,7 @@ int CRCCheck(char *data)
 	else
 		return -1;
 }
-int HandleData(char* data)
+double HandleData(char* data)
 {
 	if(ISDataValid(data))
 	{
@@ -71,6 +95,7 @@ void StopMeasurement()
 	const char message[9] = {0xfa, 0x01, 0xff, 0x04, 0x00, 0x00, 0x00, 0x00, 0xfe};
 	HAL_UART_Transmit(&huart2, (uint8_t *) message, strlen(message), timeout);
 }
+
 
 void test_handleData()
 {

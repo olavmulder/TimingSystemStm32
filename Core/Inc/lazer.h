@@ -17,13 +17,15 @@
 #include <assert.h>
 
 #define ISDataValid(x) ((x[4] == 0x01) ? 1 : 0) //byte 5 indicates if data is valid
+#define MAX_MEASUREMENT_DISTANCE 40 //30 exchange zone + 10 extra behing actual start point
+
 
 extern UART_HandleTypeDef huart2;
 
 void UARTDataTask();
 void StartContinuesMeasurement();
 void StopMeasurement();
-int HandleData(char* data);
+double HandleData(char* data);
 int CRCCheck(char *data);
 void test_lazer();
 #endif /* INC_LAZER_H_ */

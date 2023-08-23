@@ -229,7 +229,7 @@ void USART2_IRQHandler(void)
   		ch = huart2.Instance->DR;
   		uart2Buffer[uart2Bufferindex] = ch;
   		uart2Bufferindex++;
-  		if(ch == '\r')
+  		if(uart2BufferIndex >= 9)
   		{
   			uart2ReadBuffer = true;
   		}
