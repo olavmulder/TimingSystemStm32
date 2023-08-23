@@ -126,7 +126,7 @@ int main(void)
 
   /*place test there*/
   //test_atlete();
-  //test_relay();
+  test_relay();
   //test_Data(); //valid
   //test_tf();
 

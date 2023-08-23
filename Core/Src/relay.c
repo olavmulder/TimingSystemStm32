@@ -185,7 +185,7 @@ int SaveExchange(Exchange *ex)
 		temp->exchangeDistance = ex->exchangeDistance;
 		temp->takeoff = ex->takeoff;
 		temp->idOut = ex->idOut;
-		temp->nPtr = NULL;
+		temp->idIn = ex->idIn;
 		temp->nPtr = NULL;
 		tailExchange->nPtr = temp;
 		tailExchange = temp;
@@ -205,3 +205,29 @@ Exchange* GetExchange(int8_t idIn, int8_t idOut)
 	return NULL;
 }
 
+void test_getExchange()
+{
+	assert(GetExchange(0,0) == NULL);
+	assert(GetExchange(5,6) == headExchange);
+	assert(GetExchange(7,8) == headExchange->nPtr);
+}
+void test_save()
+{
+	Exchange ex;
+	ex.callpoint = 1.00;
+	ex.exchangeDistance = 2.00;
+	ex.takeoff = 3.00;
+	ex.idIn = 5;
+	ex.idOut = 6;
+	assert(SaveExchange(&ex) == 0);
+	ex.idIn = 7;
+	ex.idOut = 8;
+	assert(SaveExchange(&ex) == 0);
+	assert(headExchange->idIn = 5);
+	assert(tailExchange->idOut == 8);
+}
+void test_relay()
+{
+	test_save();
+	test_getExchange();
+}
