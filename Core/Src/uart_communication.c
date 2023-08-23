@@ -35,6 +35,7 @@ extern size_t uart1Bufferindex;
 extern uint8_t uart1Buffer[USART_BUFFER_SIZE];
 extern volatile bool uart1ReadBuffer;
 extern UART_HandleTypeDef huart1;
+extern int8_t currentRunner;
 
 static MenuState menuState = GetMenuOption;
 static MenuOptions menuoption = MakeNewAtlete;
@@ -225,7 +226,7 @@ int HandleMenuOption(char* msg)
 		char retmsg[100];
 		char *name = GetAtleteNameByNumber(currentIncomingRunner);
 		snprintf(retmsg, 100, "start incoming with: %s\r", name);
-
+		currentRunner = currentIncomingRunner;
 		ShowUI();
 		menuState = GetMenuOption;
 
@@ -236,6 +237,7 @@ int HandleMenuOption(char* msg)
 		char retmsg[100];
 		char *name = GetAtleteNameByNumber(currentOutgoingRunner);
 		snprintf(retmsg, 100, "start outgoing with: %s\r", name);
+		currentRunner = currentOutgoingRunner;
 		ShowUI();
 		menuState = GetMenuOption;
 	}

@@ -15,6 +15,7 @@ extern size_t uart2Bufferindex;
 extern uint8_t uart2Buffer[USART_BUFFER_SIZE];
 extern volatile bool uart2ReadBuffer;
 
+extern int8_t currentRunner;
 void UARTDataTask()
 {
 	const double normalTime  = 1.0 / 100.0;
@@ -31,25 +32,33 @@ void UARTDataTask()
 			double distance  = HandleData(dataToUse);
 			if(distance > MAX_MEASUREMENT_DISTANCE)
 			{
-				StopMeasurement();
-
-			}
-			//received distance
-			double tempDistance = distance;
-			//distance further away since last measurement
-			tempDistance -= lastDistance;
-			//if data is invalid, add time so distance will be dev
-			if(distance < 0)
-			{
-				time += normalTime;
+				if(MeasurementDone() < 0)
+				{
+					//error
+				}
+				//reset all variables
+				time = normalTime;
+				lastDistance = 0;
 			}
 			else
 			{
-				//add data further away since last measurement
-				DataAdd(tempDistance, time);
-				time = normalTime;
+				//received distance
+				double tempDistance = distance;
+				//distance further away since last measurement
+				tempDistance -= lastDistance;
+				//if data is invalid, add time so distance will be dev
+				if(distance < 0)
+				{
+					time += normalTime;
+				}
+				else
+				{
+					//add data further away since last measurement
+					DataAdd(tempDistance, time);
+					time = normalTime;
+				}
+				lastDistance = distance;
 			}
-			lastDistance = distance;
 
 			//rest buffer
 			memset(uart2Buffer, '\0', sizeof(uart2Buffer));
@@ -59,6 +68,31 @@ void UARTDataTask()
 		osDelay(10);
 
 	}
+}
+int MeasurementDone()
+{
+	StopMeasurement();
+	size_t len = DataGetLen();
+	Atlete* at = GetAtleteByNumber(currentRunner);
+	double speed[len];
+	double distance[len];
+	if(DataCalculate(speed, distance, len) < 0)
+	{
+		//error
+		return -1;
+	}
+	else
+	{
+		if(AtleteSetData(currentRunner, speed, distance, len) < 0)
+		{
+			//error
+			return -1;
+		}
+	}
+
+	DataReset();
+	currentRunner = -1;
+	return 0;
 }
 int CRCCheck(char *data)
 {

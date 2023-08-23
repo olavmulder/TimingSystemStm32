@@ -78,7 +78,7 @@ const osThreadAttr_t uartDataTask_attributes = {
   .priority = (osPriority_t) osPriorityHigh5,
 };
 
-
+//global variables
 size_t uart1Bufferindex;
 uint8_t uart1Buffer[USART_BUFFER_SIZE];
 volatile bool uart1ReadBuffer;
@@ -86,6 +86,11 @@ volatile bool uart1ReadBuffer;
 size_t uart2Bufferindex;
 uint8_t uart2Buffer[USART_BUFFER_SIZE];
 volatile bool uart2ReadBuffer;
+
+//number of atlete where the data will be assigned to.
+int8_t currentIncomingRunner = -1;
+int8_t currentOutgoingRunner = -1;
+int8_t currentRunner = -1;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -101,9 +106,7 @@ void StartDefaultTask(void *argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-//number of atlete where the data will be assigned to.
-int8_t currentIncomingRunner = -1;
-int8_t currentOutgoingRunner = -1;
+
 /* USER CODE END 0 */
 
 /**

@@ -25,6 +25,7 @@ extern UART_HandleTypeDef huart2;
 void UARTDataTask();
 void StartContinuesMeasurement();
 void StopMeasurement();
+int MeasurementDone();
 double HandleData(char* data);
 int CRCCheck(char *data);
 void test_lazer();

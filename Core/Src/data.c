@@ -41,17 +41,22 @@ void DataReset()
 }
 int DataAdd(double distance, double time)
 {
-	Data *temp;
-	temp = (Data*)malloc(sizeof(Data));
-	if(temp == NULL)
+	if(head == NULL)
+		return DataInit(distance, time);
+	else
 	{
-		return -1;
+		Data *temp;
+		temp = (Data*)malloc(sizeof(Data));
+		if(temp == NULL)
+		{
+			return -1;
+		}
+		tail->nPtr = temp;
+		temp->distance = distance;
+		temp->time = time;
+		temp->nPtr = NULL;
+		tail = temp;
 	}
-	tail->nPtr = temp;
-	temp->distance = distance;
-	temp->time = time;
-	temp->nPtr = NULL;
-	tail = temp;
 	return 0;
 }
 
