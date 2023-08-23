@@ -1,5 +1,7 @@
 /**
- * Get and calcualte time
+ * Get time and distance in a linked list.
+ * after timing is completed calculate speed & reset the linked list
+ *
  */
 
 #include "../Inc/data.h"

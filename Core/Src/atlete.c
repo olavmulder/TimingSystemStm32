@@ -8,6 +8,7 @@
 Atlete *headAtlete;
 Atlete *tailAtlete;
 static uint8_t atleteId = 0;
+
 Atlete *AtleteGetHead(){return headAtlete;}
 
 int InitAtlete(char* name)
@@ -54,7 +55,10 @@ int AtleteAdd(char* name)
 
 	return atleteId;
 }
-
+/**
+ * Set the speed and distance array including the length of the array
+ * in the atlete struct, based on the given id.
+ */
 int AtleteSetData(int8_t id, double *speed, double *distance, size_t len)
 {
 	Atlete *temp = headAtlete;
@@ -120,6 +124,17 @@ char* GetAtleteNameByNumber(int8_t num)
 		{
 			return temp->name;
 		}
+		temp = temp->nPtr;
+	}
+	return NULL;
+}
+Atlete* GetAtleteByNumber(int8_t num)
+{
+	Atlete *temp = headAtlete;
+	while(temp != NULL)
+	{
+		if(temp->id == num)
+			return temp;
 		temp = temp->nPtr;
 	}
 	return NULL;

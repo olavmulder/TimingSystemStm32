@@ -17,11 +17,14 @@
 
 
 void ShowRelayExchange(int8_t numIncoming, int8_t numOutgoing);
-/*double GetDistanceToPoint(size_t exchangeFrame, double timeAframe, Atlete* atlete);
-int RelaySetSpeed(Atlete *atlete);
+int GetTimeToPoint(Atlete *atlete, double exchangeDistance,
+					double* time);
 double RelayFindCrossPoint(Atlete *in, Atlete *out);
 
+double DataFindTakeOffPoint(double exchangePoint, double timeIn, double timeOut,
+						Atlete *in, Atlete *out);
+double DataFindCallPoint(double time, Atlete* atlete, double exchangePoint);
 int GetExchange();
 
-void test_relay();*/
+void test_relay();
 #endif /* INC_RELAY_H_ */

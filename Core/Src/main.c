@@ -15,6 +15,9 @@
   *
   ******************************************************************************
   */
+/*NOTE:
+	after receiving all the data, set immediately atletes data.
+*/
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
