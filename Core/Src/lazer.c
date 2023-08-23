@@ -30,6 +30,8 @@ void UARTDataTask()
 			memcpy(dataToUse, uart2Buffer, 9);
 
 			double distance  = HandleData(dataToUse);
+
+			//if person runned to end of zone
 			if(distance > MAX_MEASUREMENT_DISTANCE)
 			{
 				if(MeasurementDone() < 0)
@@ -40,7 +42,8 @@ void UARTDataTask()
 				time = normalTime;
 				lastDistance = 0;
 			}
-			else
+			//if person is at start line
+			else if(distance > MEASURE_FROM)
 			{
 				//received distance
 				double tempDistance = distance;

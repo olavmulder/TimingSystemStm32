@@ -18,7 +18,7 @@
 
 #define ISDataValid(x) ((x[4] == 0x01) ? 1 : 0) //byte 5 indicates if data is valid
 #define MAX_MEASUREMENT_DISTANCE 40 //30 exchange zone + 10 extra behing actual start point
-
+#define MEASURE_FROM 5 //only measure data from 5m
 
 extern UART_HandleTypeDef huart2;
 
