@@ -47,6 +47,7 @@
 I2C_HandleTypeDef hi2c1;
 
 UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart2;
 
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -62,12 +63,22 @@ const osThreadAttr_t displayTask_attributes = {
   .stack_size = 254 * 4,
   .priority = (osPriority_t) osPriorityNormal2,
 };
+
 osThreadId_t uartTaskHandle;
 const osThreadAttr_t uartTask_attributes = {
   .name = "uartTask",
   .stack_size = 254 * 4,
+  .priority = (osPriority_t) osPriorityHigh4,
+};
+
+osThreadId_t uartDataTaskHandle;
+const osThreadAttr_t uartDataTask_attributes = {
+  .name = "uartDataTask",
+  .stack_size = 254 * 4,
   .priority = (osPriority_t) osPriorityHigh5,
 };
+
+
 size_t uart1Bufferindex;
 uint8_t uart1Buffer[USART_BUFFER_SIZE];
 volatile bool uart1ReadBuffer;
@@ -78,6 +89,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART1_UART_Init(void);
+static void MX_USART2_UART_Init(void);
 void StartDefaultTask(void *argument);
 
 /* USER CODE BEGIN PFP */
@@ -118,6 +130,7 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_USART1_UART_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   ssd1306_Init();
   ssd1306_Reset();
@@ -159,8 +172,10 @@ int main(void)
   /* add threads, ... */
   displayTaskHandle = osThreadNew(DisplayTask, NULL, &displayTask_attributes);
   uartTaskHandle    = osThreadNew(UARTTask, NULL, &uartTask_attributes);
-
-  if(displayTaskHandle == NULL || uartTaskHandle == NULL)
+  uartDataTaskHandle = osThreadNew(UARTDataTask, NULL, &uartDataTask_attributes);
+  if(displayTaskHandle 	== NULL ||
+     uartTaskHandle 	== NULL ||
+	 uartDataTaskHandle == NULL)
   {
 	  return -1;
   }
@@ -285,6 +300,39 @@ static void MX_USART1_UART_Init(void)
   /* USER CODE BEGIN USART1_Init 2 */
   USART1->CR1 |= (USART_CR1_TE | USART_CR1_RXNEIE | USART_CR1_RE | USART_CR1_UE);
   /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART2_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART2_Init 0 */
+
+  /* USER CODE END USART2_Init 0 */
+
+  /* USER CODE BEGIN USART2_Init 1 */
+
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART2_Init 2 */
+  USART2->CR2 |= (USART_CR2_TE | USART_CR2_RXNEIE | USART_CR2_RE | USART_CR2_UE);
+  /* USER CODE END USART2_Init 2 */
 
 }
 

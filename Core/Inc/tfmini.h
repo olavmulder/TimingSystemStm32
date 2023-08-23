@@ -15,18 +15,11 @@
 #include <stdbool.h>
 #include "data.h"
 
-typedef struct _tfSetting TFSetting;
-struct _tfSetting{
-	bool measureType;// false = mm, true = cm
-	unsigned int period; //is ms  10 is default
-	bool mode; //false = short, true = long
-	int rangeLimit; // -1 disabled;
-};
-extern UART_HandleTypeDef huart1;
 
-void DataHandling_Task();
-void TFInit(TFSetting setting);
-unsigned int TFGetData(char *msg, size_t len);
+extern UART_HandleTypeDef huart2;
 
-void test_tf();
+void UARTDataTask();
+void StartContinuesMeasurement();
+void StopMeasurement();
+
 #endif /* INC_TFMINI_H_ */
