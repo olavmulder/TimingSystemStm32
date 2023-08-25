@@ -13,6 +13,7 @@
 
 #include "display.h"
 #include "relay.h"
+#include "lazer.h"
 #include <string.h>
 
 #define USART_BUFFER_SIZE	100

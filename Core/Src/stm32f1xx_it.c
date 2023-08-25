@@ -62,9 +62,8 @@ extern size_t uart1Bufferindex;
 extern uint8_t uart1Buffer[USART_BUFFER_SIZE];
 extern volatile bool uart1ReadBuffer;
 
-extern size_t uart2Bufferindex;
-extern uint8_t uart2Buffer[USART_BUFFER_SIZE];
-extern volatile bool uart2ReadBuffer;
+extern FIFO uart2Buffer;
+
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -227,12 +226,7 @@ void USART2_IRQHandler(void)
   	if (((isrflags & USART_SR_RXNE) != RESET) && ((cr1its & USART_CR1_RXNEIE) != RESET)){
   		huart2.Instance->SR;
   		ch = huart2.Instance->DR;
-  		uart2Buffer[uart2Bufferindex] = ch;
-  		uart2Bufferindex++;
-  		if(uart2BufferIndex >= 9)
-  		{
-  			uart2ReadBuffer = true;
-  		}
+  		FIFOAddData(ch, &uart2Buffer);
   	}
   	HAL_UART_IRQHandler(&huart2);
   /* USER CODE END USART2_IRQn 1 */

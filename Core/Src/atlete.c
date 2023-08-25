@@ -5,8 +5,8 @@
  *      Author: olav
  */
 #include "../Inc/atlete.h"
-Atlete *headAtlete;
-Atlete *tailAtlete;
+Atlete *headAtlete = NULL;
+Atlete *tailAtlete = NULL;
 static uint8_t atleteId = 0;
 
 Atlete *AtleteGetHead(){return headAtlete;}
@@ -95,7 +95,7 @@ int AtleteSetData(int8_t id, double *speed, double *distance, size_t len)
 }
 char* ShowAtlete()
 {
-	const size_t len = NAME_LENGTH+5;
+	const size_t len = NAME_LENGTH+6;
 	size_t totalLenght = len;
 	char *str = (char*)malloc(len);
 	memset(str, '\0', len);

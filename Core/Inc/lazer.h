@@ -14,6 +14,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include "data.h"
+#include "fifo.h"
 #include <assert.h>
 
 #define ISDataValid(x) ((x[4] == 0x01) ? 1 : 0) //byte 5 indicates if data is valid
@@ -27,6 +28,8 @@ void StartContinuesMeasurement();
 void StopMeasurement();
 int MeasurementDone();
 double HandleData(char* data);
-int CRCCheck(char *data);
+int CRCCheck(char *data, size_t len);
 void test_lazer();
+
+void test_makeRunningPerson();
 #endif /* INC_LAZER_H_ */

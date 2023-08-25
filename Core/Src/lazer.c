@@ -9,30 +9,43 @@
 
 #include "../Inc/lazer.h"
 
-const size_t timeout = 100;
-
-extern size_t uart2Bufferindex;
-extern uint8_t uart2Buffer[USART_BUFFER_SIZE];
-extern volatile bool uart2ReadBuffer;
-
+#define MESSAGE_LENGTH 9 //amount bytes for the message the lazer sends
+const size_t timeout = 1000;
 extern int8_t currentRunner;
+
+FIFO uart2Buffer;
+/**
+ * task for handling incoming data from the lazer
+ */
 void UARTDataTask()
 {
+	//test_makeRunningPerson();
+	FIFOInit(&uart2Buffer);
+
 	const double normalTime  = 1.0 / 100.0;
 	double time = normalTime;
 	double lastDistance;
 	while(1)
 	{
-		if(uart2ReadBuffer)
+		if(uart2Buffer.len >= MESSAGE_LENGTH)
 		{
-			//copy data
 			char dataToUse[9];
-			memcpy(dataToUse, uart2Buffer, 9);
+			//get data from buffer
+			size_t readBytes = FIFOHandleData(dataToUse, &uart2Buffer, MESSAGE_LENGTH);
+
+			if(readBytes != MESSAGE_LENGTH)
+				goto end;
+			if(CRCCheck(dataToUse, sizeof(dataToUse)) < 0)
+				goto end;
 
 			double distance  = HandleData(dataToUse);
-
+			//received not a valid message
+			if(distance < 0)
+			{
+				time += normalTime;
+			}
 			//if person runned to end of zone
-			if(distance > MAX_MEASUREMENT_DISTANCE)
+			else if(distance > MAX_MEASUREMENT_DISTANCE)
 			{
 				if(MeasurementDone() < 0)
 				{
@@ -45,29 +58,17 @@ void UARTDataTask()
 			//if person is at start line
 			else if(distance > MEASURE_FROM)
 			{
-				//received distance
-				double tempDistance = distance;
+				//received distance because real ran distance
+				double tempDistance = distance-MEASURE_FROM;
 				//distance further away since last measurement
 				tempDistance -= lastDistance;
-				//if data is invalid, add time so distance will be dev
-				if(distance < 0)
-				{
-					time += normalTime;
-				}
-				else
-				{
-					//add data further away since last measurement
-					DataAdd(tempDistance, time);
-					time = normalTime;
-				}
+				//add data further away since last measurement
+				DataAdd(tempDistance, time);
+				time = normalTime;
 				lastDistance = distance;
 			}
-
-			//rest buffer
-			memset(uart2Buffer, '\0', sizeof(uart2Buffer));
-			uart2Bufferindex = 0;
-			uart2ReadBuffer = false;
 		}
+		end:
 		osDelay(10);
 
 	}
@@ -75,8 +76,11 @@ void UARTDataTask()
 int MeasurementDone()
 {
 	StopMeasurement();
-	size_t len = DataGetLen();
+	size_t len;
+	DataGetLen(&len);
 	Atlete* at = GetAtleteByNumber(currentRunner);
+	if(at == NULL)
+		return -1;
 	double speed[len];
 	double distance[len];
 	if(DataCalculate(speed, distance, len) < 0)
@@ -97,10 +101,10 @@ int MeasurementDone()
 	currentRunner = -1;
 	return 0;
 }
-int CRCCheck(char *data)
+int CRCCheck(char *data, size_t len)
 {
 	int sum = 0;
-	for(size_t i = 0; i< 8 ;i++)
+	for(size_t i = 0; i< len; i++)
 	{
 		sum += data[i];
 	}
@@ -114,7 +118,7 @@ double HandleData(char* data)
 {
 	if(ISDataValid(data))
 	{
-		double distance = data[6] | (data[7] << 8);
+		double distance = (data[6] | (data[7] << 8));
 		distance /= 10.0; //from dm to m;
 		return distance;
 	}
@@ -124,16 +128,26 @@ double HandleData(char* data)
 void StartContinuesMeasurement()
 {
 	const char message[9] = {0xfa, 0x01, 0xff, 0x04, 0x01, 0x00, 0x00, 0x00, 0xff};
-	HAL_UART_Transmit(&huart2, (uint8_t *) message, strlen(message), timeout);
+	if(HAL_UART_Transmit(&huart2, (uint8_t *) message, sizeof(message), timeout) != HAL_OK)
+	{
+		exit(-1);
+	}
 }
 
 void StopMeasurement()
 {
 	const char message[9] = {0xfa, 0x01, 0xff, 0x04, 0x00, 0x00, 0x00, 0x00, 0xfe};
-	HAL_UART_Transmit(&huart2, (uint8_t *) message, strlen(message), timeout);
+	HAL_UART_Transmit(&huart2, (uint8_t *) message, sizeof(message), timeout);
 }
 
+void test_makeRunningPerson()
+{
+	InitAtlete("Olav");
+	currentRunner = 0;
+	currentIncomingRunner = 0;
+	StartContinuesMeasurement();
 
+}
 void test_handleData()
 {
 	char data[] = {0xfb, 0x03, 0x00, 0x04, 0x01, 0x00, 0x4c, 0x00, 0x4f};
@@ -150,9 +164,9 @@ void test_handleData()
 void test_crc()
 {
 	char data[] = {0xfb, 0x03, 0x00, 0x04, 0x01, 0x00, 0x4c, 0x00, 0x4f};
-	assert(CRCCheck(data) == 0);
+	assert(CRCCheck(data, sizeof(data)) == 0);
 	data[0] = 0x00;
-	assert(CRCCheck(data) == -1);
+	assert(CRCCheck(data, sizeof(data)) == -1);
 }
 void test_lazer()
 {

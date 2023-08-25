@@ -74,7 +74,7 @@ const osThreadAttr_t uartTask_attributes = {
 osThreadId_t uartDataTaskHandle;
 const osThreadAttr_t uartDataTask_attributes = {
   .name = "uartDataTask",
-  .stack_size = 254 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityHigh5,
 };
 
@@ -83,9 +83,6 @@ size_t uart1Bufferindex;
 uint8_t uart1Buffer[USART_BUFFER_SIZE];
 volatile bool uart1ReadBuffer;
 
-size_t uart2Bufferindex;
-uint8_t uart2Buffer[USART_BUFFER_SIZE];
-volatile bool uart2ReadBuffer;
 
 //number of atlete where the data will be assigned to.
 int8_t currentIncomingRunner = -1;
@@ -142,15 +139,16 @@ int main(void)
   ssd1306_Init();
   ssd1306_Reset();
   ShowUI();
-  //this test does work
+   //this test does work
 
   /*place test there*/
   //test_atlete();
   //test_relay();
-  test_lazer();
+
+  //test_lazer();
   //test_Data(); //valid
   //test_tf();
-
+  test_makeRunningPerson();
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -181,6 +179,7 @@ int main(void)
   displayTaskHandle = osThreadNew(DisplayTask, NULL, &displayTask_attributes);
   uartTaskHandle    = osThreadNew(UARTTask, NULL, &uartTask_attributes);
   uartDataTaskHandle = osThreadNew(UARTDataTask, NULL, &uartDataTask_attributes);
+
   if(displayTaskHandle 	== NULL ||
      uartTaskHandle 	== NULL ||
 	 uartDataTaskHandle == NULL)
@@ -199,9 +198,11 @@ int main(void)
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1)
   {
     /* USER CODE END WHILE */
+
 
     /* USER CODE BEGIN 3 */
   }
@@ -380,6 +381,7 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
+ //make person & start measurement
   for(;;)
   {
 	  osDelay(1);
