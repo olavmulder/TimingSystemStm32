@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #define FIFO_SIZE 128
 

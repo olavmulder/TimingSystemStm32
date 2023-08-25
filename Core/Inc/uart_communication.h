@@ -18,21 +18,22 @@
 
 #define USART_BUFFER_SIZE	100
 
-typedef enum _menuOption MenuOptions;
+
 enum _menuOption
 {
 	MakeNewAtlete, ShowAllAtletes, SelectIncoming,
 	SelectOutgoing, StartIncoming, StartOutgoing,
 	CalculateExchangeData, GetExchangeData
 };
+typedef enum _menuOption MenuOptions;
 
-typedef enum _menuState MenuState;
 enum _menuState
 {
 	GetAnswere, GetAnswere1, GetAnswere2,  GetMenuOption,
 };
+typedef enum _menuState MenuState;
 
-void UARTTask();
+void UARTTask(void *paramter);
 int HandleBuffer();
 int MenuAction(char* msg);
 int HandleMenuOption(char* msg);

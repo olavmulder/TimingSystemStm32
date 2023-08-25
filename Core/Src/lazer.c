@@ -17,8 +17,9 @@ FIFO uart2Buffer;
 /**
  * task for handling incoming data from the lazer
  */
-void UARTDataTask()
+void UARTDataTask(void *parameter)
 {
+	size_t delay = *(size_t*)parameter;
 	//test_makeRunningPerson();
 	FIFOInit(&uart2Buffer);
 
@@ -69,7 +70,7 @@ void UARTDataTask()
 			}
 		}
 		end:
-		osDelay(10);
+		osDelay(delay);
 
 	}
 }

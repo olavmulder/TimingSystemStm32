@@ -40,15 +40,16 @@ extern int8_t currentRunner;
 static MenuState menuState = GetMenuOption;
 static MenuOptions menuoption = MakeNewAtlete;
 
-void UARTTask()
+void UARTTask(void *paramter)
 {
+	size_t delay = *(size_t*)paramter;
 	while(1)
 	{
 		if(uart1ReadBuffer)
 		{
 		  HandleBuffer();
 		}
-		osDelay(20);
+		osDelay(delay);
 	}
 }
 int HandleBuffer()
@@ -92,6 +93,9 @@ int HandleMenuAnswere(char *msg)
 	char *name = NULL;
 	int8_t num = -1;
 	char retmsg[50];
+	static int8_t in = -1;
+	static int8_t out = -1;
+
 	switch(menuoption)
 	{
 	case MakeNewAtlete:
@@ -151,7 +155,6 @@ int HandleMenuAnswere(char *msg)
 		ShowUI();
 		break;
 	case GetExchangeData:
-		static int8_t in = -1, out = -1;
 		if(menuState == GetAnswere1)
 		{
 			in = atoi(msg);

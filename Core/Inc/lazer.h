@@ -23,7 +23,7 @@
 
 extern UART_HandleTypeDef huart2;
 
-void UARTDataTask();
+void UARTDataTask(void* parameter);
 void StartContinuesMeasurement();
 void StopMeasurement();
 int MeasurementDone();

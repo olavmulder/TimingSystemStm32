@@ -218,17 +218,13 @@ void USART1_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
-	char ch;
   /* USER CODE END USART2_IRQn 0 */
+	HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
-  uint32_t isrflags   = READ_REG(huart2.Instance->SR);
-  	uint32_t cr1its     = READ_REG(huart2.Instance->CR1);
-  	if (((isrflags & USART_SR_RXNE) != RESET) && ((cr1its & USART_CR1_RXNEIE) != RESET)){
-  		huart2.Instance->SR;
-  		ch = huart2.Instance->DR;
-  		FIFOAddData(ch, &uart2Buffer);
-  	}
-  	HAL_UART_IRQHandler(&huart2);
+	uint8_t buf;
+	HAL_UART_Receive_IT(&huart2,&buf, 1);
+  	FIFOAddData( (char)buf, &uart2Buffer);
+
   /* USER CODE END USART2_IRQn 1 */
 }
 

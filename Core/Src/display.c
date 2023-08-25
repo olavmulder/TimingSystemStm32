@@ -7,15 +7,16 @@
 #include "../Inc/display.h"
 
 
-void DisplayTask(void* pvParamters)
+void DisplayTask(void *parameter)
 {
-	const uint8_t hz = 10;
+	//const uint8_t hz = 10;
+	size_t hz = *(size_t*)parameter;
 	while(1)
 	{
 		DisplayAll();
 		//show i on display
 		ssd1306_UpdateScreen();
-		osDelay(1000);
+		osDelay((int)(1000 / hz));
 	}
 }
 

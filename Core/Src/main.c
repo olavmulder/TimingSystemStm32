@@ -88,6 +88,11 @@ volatile bool uart1ReadBuffer;
 int8_t currentIncomingRunner = -1;
 int8_t currentOutgoingRunner = -1;
 int8_t currentRunner = -1;
+
+size_t displayHz = 1;
+size_t mainTaskDelay = 1;
+size_t uartTaskDelay = 20;
+size_t uartDataTaskDelay = 10;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -149,6 +154,7 @@ int main(void)
   //test_Data(); //valid
   //test_tf();
   test_makeRunningPerson();
+
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -172,13 +178,13 @@ int main(void)
 
   /* Create the thread(s) */
   /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+  defaultTaskHandle = osThreadNew(StartDefaultTask, (void*)&mainTaskDelay, &defaultTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  displayTaskHandle = osThreadNew(DisplayTask, NULL, &displayTask_attributes);
-  uartTaskHandle    = osThreadNew(UARTTask, NULL, &uartTask_attributes);
-  uartDataTaskHandle = osThreadNew(UARTDataTask, NULL, &uartDataTask_attributes);
+  displayTaskHandle = osThreadNew(DisplayTask, (void*)&displayHz, &displayTask_attributes);
+  uartTaskHandle    = osThreadNew(UARTTask, (void*)&uartTaskDelay, &uartTask_attributes);
+  uartDataTaskHandle = osThreadNew(UARTDataTask, (void*)&uartDataTaskDelay, &uartDataTask_attributes);
 
   if(displayTaskHandle 	== NULL ||
      uartTaskHandle 	== NULL ||
@@ -382,9 +388,10 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
  //make person & start measurement
+	size_t delay = *(size_t*)argument;
   for(;;)
   {
-	  osDelay(1);
+	  osDelay(delay);
   }
   /* USER CODE END 5 */
 }
