@@ -17,3 +17,4 @@ Debug/
 Drivers/
 Middlewares/
 stm32-ssd1306/
+/Release/
