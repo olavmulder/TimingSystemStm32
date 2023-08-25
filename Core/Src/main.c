@@ -132,7 +132,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  test_atlete();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -141,13 +141,13 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  ssd1306_Init();
-  ssd1306_Reset();
-  ShowUI();
+  //ssd1306_Init();
+  //ssd1306_Reset();
+  //ShowUI();
    //this test does work
 
   /*place test there*/
-  //test_atlete();
+
   //test_relay();
 
   //test_lazer();

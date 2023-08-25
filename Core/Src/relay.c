@@ -14,7 +14,7 @@ static Exchange *tailExchange = NULL;
  * Do all calcualtions with given input
  * @return
  */
-int CalculateRelayExchange(int8_t numIncoming, int8_t numOutgoing)
+/*int CalculateRelayExchange(int8_t numIncoming, int8_t numOutgoing)
 {
 	//TODO callpoint time, save marge exchange point
 	double callpointTime = 0.8;
@@ -46,7 +46,7 @@ int CalculateRelayExchange(int8_t numIncoming, int8_t numOutgoing)
 	ex.idIn = in->id;
 	ex.idOut = out->id;
 	return SaveExchange(&ex);
-}
+}*/
 /**
  * find crosspoint, based on both speeds of incoming and outgoing runner
  *return -1, no array init

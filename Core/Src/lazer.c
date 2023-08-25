@@ -79,9 +79,9 @@ int MeasurementDone()
 	StopMeasurement();
 	size_t len;
 	DataGetLen(&len);
-	Atlete* at = GetAtleteByNumber(currentRunner);
-	if(at == NULL)
-		return -1;
+	//Atlete* at = GetAtleteByNumber(currentRunner);
+	//if(at == NULL)
+	//	return -1;
 	double speed[len];
 	double distance[len];
 	if(DataCalculate(speed, distance, len) < 0)
@@ -143,7 +143,7 @@ void StopMeasurement()
 
 void test_makeRunningPerson()
 {
-	InitAtlete("Olav");
+	AtleteAdd("Olav");
 	currentRunner = 0;
 	currentIncomingRunner = 0;
 	StartContinuesMeasurement();

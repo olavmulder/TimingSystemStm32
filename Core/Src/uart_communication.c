@@ -100,11 +100,11 @@ int HandleMenuAnswere(char *msg)
 	{
 	case MakeNewAtlete:
 
-		if(AtleteGetHead() == NULL)
+		/*if(AtleteGetHead() == NULL)
 			res =  InitAtlete(msg);
 		else
 			res =  AtleteAdd(msg);
-		menuState = GetMenuOption;
+		menuState = GetMenuOption;*/
 		ShowUI();
 		break;
 	case SelectIncoming:
@@ -249,7 +249,7 @@ int HandleMenuOption(char* msg)
 	else if(strcmp(msg, "7\r") == 0)
 	{
 		//calcualte exchange data
-		CalculateRelayExchange(currentIncomingRunner, currentOutgoingRunner);
+		//CalculateRelayExchange(currentIncomingRunner, currentOutgoingRunner);
 		ShowUI();
 		menuState = GetMenuOption;
 	}
