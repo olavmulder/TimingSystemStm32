@@ -5,8 +5,6 @@
  *      Author: olav
  */
 #include "../Inc/atlete.h"
-Atlete *headAtlete = NULL;
-Atlete *tailAtlete = NULL;
 
 Atlete atletes[AMOUNT_ATLETES];
 uint8_t amountAtletes = 0;

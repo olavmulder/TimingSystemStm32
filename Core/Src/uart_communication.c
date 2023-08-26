@@ -166,7 +166,8 @@ int HandleMenuAnswere(char *msg)
 		if(in != -1 && out != -1)
 		{
 
-			Exchange *ex = GetExchange(in, out);
+			Exchange *ex = NULL;
+			GetExchange(in, out, ex);
 			if(ex == NULL)
 				HAL_UART_Transmit(&huart1, (uint8_t *)"GetExchange Error", strlen("GetExchange Error"), 1000);
 			else
