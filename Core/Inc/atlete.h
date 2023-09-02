@@ -35,7 +35,7 @@ extern int8_t currentOutgoingRunner;
 int AtleteInit();
 int AtleteAdd(char* name);
 int AtleteSetData(int8_t id, double *speed, double *distance, size_t len);
-char* ShowAtlete();
+void ShowAtlete(char*, size_t len);
 char* GetAtleteNameByNumber(int8_t num);
 
 void test_atlete();

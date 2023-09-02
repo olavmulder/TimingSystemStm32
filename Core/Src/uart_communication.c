@@ -200,13 +200,10 @@ int HandleMenuOption(char* msg)
 	}
 	else if(strcmp(msg, "2\r") == 0)
 	{
-		char* str = ShowAtlete();
-		if(str != NULL)
-		{
-			HAL_UART_Transmit(&huart1, (uint8_t *)str, strlen(str), 1000);
-			free(str);
-		}else
-			HAL_UART_Transmit(&huart1, (uint8_t *)"empty...", strlen("empty..."), 1000);
+		size_t len = AMOUNT_ATLETES* (NAME_LENGTH+6);
+		char str[len];
+		ShowAtlete(str, len);
+		HAL_UART_Transmit(&huart1, (uint8_t *)str, strlen(str), 1000);
 		ShowUI();
 		menuState = GetMenuOption;
 	}

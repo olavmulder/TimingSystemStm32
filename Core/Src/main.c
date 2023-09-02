@@ -132,7 +132,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  test_atlete();
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -153,8 +153,8 @@ int main(void)
   //test_lazer();
   //test_Data(); //valid
   //test_tf();
-  test_makeRunningPerson();
-
+  //test_makeRunningPerson();
+  test_atlete();
   /* USER CODE END 2 */
 
   /* Init scheduler */

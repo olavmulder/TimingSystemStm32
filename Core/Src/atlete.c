@@ -86,23 +86,18 @@ int AtleteSetData(int8_t id, double *speed, double *distance, size_t len)
 	}
 	return 0;
 }
-char* ShowAtlete()
-{
-	const size_t len = NAME_LENGTH+6;
-	size_t totalLenght = len;
-	char *str = (char*)malloc(len);
-	memset(str, '\0', len);
 
+void ShowAtlete(char* str, size_t len)
+{
+	//reset string
+	memset(str, '\0', len);
 	for(uint8_t i = 0; i < amountAtletes; i++)
 	{
-		char tempStr[len];
-		memset(tempStr, '\0', len);
+		char tempStr[NAME_LENGTH+6];
+		memset(tempStr, '\0', NAME_LENGTH+6);
 		snprintf(tempStr, sizeof(tempStr), "%d:%s\n", atletes[i].id, atletes[i].name);
 		strcat(str, tempStr);
-		totalLenght += len;
-		str = (char*)realloc(str, totalLenght);
 	}
-	return str;
 }
 char* GetAtleteNameByNumber(int8_t num)
 {
@@ -118,9 +113,9 @@ void test_atlete_init()
 }
 void test_show_all()
 {
-	char* res = ShowAtlete();
-	assert(strlen(res) == strlen("0:Olav\n1:Sven\n"));
-	assert(strcmp("0:Olav\n1:Sven\n", res) == 0);
+	size_t len = AMOUNT_ATLETES * (NAME_LENGTH+6);
+	char str[len];
+	ShowAtlete(str, len);
 }
 
 void test_addatlete()
@@ -144,4 +139,5 @@ void test_atlete()
 {
 	test_atlete_init();
 	test_addatlete();
+	test_show_all();
 }
