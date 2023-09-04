@@ -25,7 +25,7 @@ void UARTDataTask(void *parameter)
 
 	const double normalTime  = 1.0 / 100.0;
 	double time = normalTime;
-	double lastDistance;
+	double lastDistance = 0;
 	while(1)
 	{
 		if(uart2Buffer.len >= MESSAGE_LENGTH)

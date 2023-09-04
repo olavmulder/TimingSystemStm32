@@ -8,14 +8,12 @@
 #ifndef INC_DISPLAY_H_
 #define INC_DISPLAY_H_
 
-#include "stm32f1xx_hal.h"
 #include "ssd1306/ssd1306.h"
-#include "cmsis_os.h"
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "button.h"
+
 
 void DisplayTask(void* pvParamters);
+void DrawIndicator();
 void DisplayAll();
 void DisplayAtlete();
 void DisplayExchangeData();
