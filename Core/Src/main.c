@@ -153,6 +153,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
   ssd1306_Init();
   ssd1306_Reset();
+  AtleteAddFromSDcard();
+
   //ShowUI();
    //this test does work
 
@@ -164,7 +166,7 @@ int main(void)
   //test_Data(); //valid
   //test_tf();
   //test_makeRunningPerson();
-  test_atlete();
+  //test_atlete();
   /* USER CODE END 2 */
 
   /* Init scheduler */

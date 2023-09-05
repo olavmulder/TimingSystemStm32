@@ -14,16 +14,17 @@ FATFS fatFS;
 FIL fil;
 FRESULT fres;
 
-size_t ReadTillChar(char* bufIn, char*bufOut, char c, size_t len)
+
+size_t ReadTillChar(char* bufIn, char*bufOut, char c, char c2, size_t len)
 {
 	size_t i = 0;
-	while(*(bufIn+i) != c && i < len-1)
+	while(*(bufIn+i) != c && *(bufIn+i) != c2 && i < len-1)
 	{
 		*(bufOut+i) = *(bufIn+i);
 		i++;
 
 	}
-	return i+1;//reject '\n'
+	return i+1;//reject c || c2 position
 }
 void GetStatics()
 {
@@ -60,14 +61,9 @@ int8_t GetData(char *buf, size_t len)
 {
 	//We can either use f_read OR f_gets to get data out of files
 	//f_gets is a wrapper on f_read that does some string formatting for us
-	int8_t res;
 	unsigned int actualRead;
 	FRESULT rres = f_read(&fil,buf, len, &actualRead);
-	if(rres == 0)
-		res = 0;
-	else
-		res = -1;
 	//Be a tidy kiwi - don't forget to close your file!
 	f_close(&fil);
-	return res;
+	return rres;
 }

@@ -14,7 +14,8 @@
 #include <stdint.h>
 #include <string.h>
 
-#define NAME_LENGTH 20
+#include "storage.h"
+
 #define AMOUNT_ATLETES 30
 
 
@@ -33,6 +34,7 @@ extern int8_t currentIncomingRunner;
 extern int8_t currentOutgoingRunner;
 
 int AtleteInit();
+void AtleteAddFromSDcard();
 int AtleteAdd(char* name);
 int AtleteSetData(int8_t id, double *speed, double *distance, size_t len);
 void ShowAtlete(char*, size_t len);

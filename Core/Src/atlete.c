@@ -36,6 +36,40 @@ int AtleteInit()
 	init = 1;
 	return 0;
 }
+void AtleteAddFromSDcard()
+{
+	//open file
+	MountStorage();
+	OpenFile("names.txt", Read);
+	//make buffer to read from
+	const uint16_t len = AMOUNT_ATLETES*NAME_LENGTH;
+	char buffer[len];
+	memset(buffer, '\0', len);
+	//set all data in buffer
+	if(GetData(buffer, len) != 0)
+		while(1);
+	uint16_t i = 0;
+	size_t add = 0;
+	//read till buffer
+	if(buffer[0] != '[')
+	{
+		//TODO error on screen!!
+		while(1);
+	}
+	i = 1; //elliminate the '[' char
+
+	do
+	{
+		char tempBuf[NAME_LENGTH];
+		memset(tempBuf, '\0', NAME_LENGTH);
+		i += ReadTillChar(buffer+i, tempBuf, ',', ']', NAME_LENGTH);
+		if(AtleteAdd(tempBuf) != 0)
+		{
+			//TODO error on screen!!
+			while(1);
+		}
+	}while(buffer[i-1] != ']');
+}
 /**
  * add name to array
  * return -1 if array is full

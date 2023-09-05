@@ -67,19 +67,14 @@ void DisplayAtlete()
 	const uint8_t string_len = 50;
 	//GetAtletes:
 	const uint8_t position = 0;
-	MountStorage();
-	OpenFile("names.txt", Read);
-	const size_t len = 1000;
-	char buffer[len];
-	if(GetData(buffer, len) != 0)
-		while(1);
+
 	//get first two names:
 	char names[2][NAME_LENGTH];
 	memset(names[0], '\0',NAME_LENGTH);
 	memset(names[1], '\0',NAME_LENGTH);
-	size_t i = ReadTillChar(buffer, names[0], '\n', NAME_LENGTH);
-	ReadTillChar(buffer+i, names[1], '\n', NAME_LENGTH);
 
+	snprintf(names[0], NAME_LENGTH, "%s", GetAtleteNameByNumber(0));
+	snprintf(names[1], NAME_LENGTH, "%s", GetAtleteNameByNumber(1));
 	char string[string_len];
 	memset(string, '\0', string_len);
 
