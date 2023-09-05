@@ -9,6 +9,7 @@
 #define INC_DISPLAY_H_
 
 #include "ssd1306/ssd1306.h"
+#include "storage.h"
 #include "button.h"
 
 

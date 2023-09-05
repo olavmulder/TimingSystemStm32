@@ -64,20 +64,38 @@ void DisplayExchangeData()
 }
 void DisplayAtlete()
 {
+	const uint8_t string_len = 50;
 	//GetAtletes:
 	const uint8_t position = 0;
+	MountStorage();
+	OpenFile("names.txt", Read);
+	const size_t len = 1000;
+	char buffer[len];
+	if(GetData(buffer, len) != 0)
+		while(1);
+	//get first two names:
+	char names[2][NAME_LENGTH];
+	memset(names[0], '\0',NAME_LENGTH);
+	memset(names[1], '\0',NAME_LENGTH);
+	size_t i = ReadTillChar(buffer, names[0], '\n', NAME_LENGTH);
+	ReadTillChar(buffer+i, names[1], '\n', NAME_LENGTH);
 
-	char string[50];
-	char name[2][20] =
+	char string[string_len];
+	memset(string, '\0', string_len);
+
+	char typeRunner[2][NAME_LENGTH] =
 	{
-			"in: name",
-			"out: name",
+			"in:",
+			"out:",
 	};
+
 	for(uint8_t i = 0; i < 2;i++)
 	{
-		strcpy(string, name[i]);
+		strcpy(string, typeRunner[i]);
+		strcat(string, names[i]);
 		ssd1306_SetCursor(CLEARANCE, position+(i*MULTI_INDEX));
-		ssd1306_WriteString(&name[i][0], Font_7x10 , Black);
+		ssd1306_WriteString(string, Font_7x10 , Black);
+		memset(string, '\0', string_len);
 	}
 }
 
