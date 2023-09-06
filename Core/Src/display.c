@@ -154,6 +154,7 @@ void SelectRunner(uint16_t pin)
 }
 void ShortTimeMessage(char* msg, uint16_t time)
 {
+	const uint8_t margin = 3;
 	ssd1306_Fill(Black);
 	uint8_t rows = 0;
 	uint8_t i = 0;
@@ -169,7 +170,7 @@ void ShortTimeMessage(char* msg, uint16_t time)
 		if(msg[i] == '\n'){
 			rows++;
 			j=0;
-			ssd1306_SetCursor(0,rows*FONT_HEIGHT);
+			ssd1306_SetCursor(margin,rows*FONT_HEIGHT);
 			ssd1306_WriteString(temp, Font_7x10 , Black);
 			memset(temp, '\0', len);
 		}
@@ -183,7 +184,7 @@ void HandleRunnerSelection(int8_t *runner, char* str)
 	*runner = tempRunner;
 	tempRunner = -1;
 	char msg[50];
-	snprintf(msg, 50, "%s = %s",str, GetAtleteNameByNumber(*runner));
+	snprintf(msg, 50, "%s = %s\n",str, GetAtleteNameByNumber(*runner));
 	ShortTimeMessage(msg, 2000);
 	displayState = MENU;
 }
@@ -194,13 +195,13 @@ void StartRunner(char *str, int8_t *runner)
 
 	if(*runner == -1)
 	{
-		snprintf(msg, 50, "first select %s", str);
-		ShortTimeMessage("first select outgoing", 2000);
+		snprintf(msg, 50, "first select %s\n", str);
+		ShortTimeMessage(msg, 2000);
 		displayState = MENU;
 		return;
 	}
 	StartContinuesMeasurement();
-	snprintf(msg, 50, "%s can start now", str);
+	snprintf(msg, 50, "%s can\nstart now\n", str);
 	ShortTimeMessage(msg, 2000);
 	uint8_t i = 0;
 	while(lazerIsRunning && i < 5)
@@ -208,8 +209,9 @@ void StartRunner(char *str, int8_t *runner)
 		osDelay(1000);
 		i++;
 	}
-	snprintf(msg, 50, "%s has stopped now", str);
+	snprintf(msg, 50, "%s has\n stopped now\nPush left\nto exit\n", str);
 	ShortTimeMessage(msg, 2000);
+	displayState = MENU;
 }
 void GetExchangeFromMenu()
 {
@@ -219,5 +221,21 @@ void GetExchangeFromMenu()
 		displayState = MENU;
 		return;
 	}
-	CalculateRelayExchange(incomingRunner, outgoingRunner);
+	if(CalculateRelayExchange(incomingRunner, outgoingRunner) != 0)
+	{
+		ShortTimeMessage("Calculate Exch.\nwent wrong\nPush left\n", 2000);
+		displayState = MENU;
+		return;
+	}
+	Exchange ex;
+	if(GetExchange(incomingRunner, outgoingRunner, &ex) != 0)
+	{
+		ShortTimeMessage("Cant get exchange\nbetween those\nrunners\nPush left\n", 2000);
+		displayState = MENU;
+		return;
+	}
+	char msg[100];
+	snprintf(msg, 100, "Call at: %.2f\nExchange:%.2f\nTakeoff: %.2f\nPush left to exit\n",
+			ex.callpoint, ex.exchangeDistance, ex.takeoff);
+	ShortTimeMessage(msg,5000);
 }

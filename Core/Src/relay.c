@@ -93,7 +93,7 @@ int SetExchange(double takeoff, double crosspoint, double callpoint, int8_t idIn
 {
 	static uint8_t amountExchanges = 0;
 
-	if(amountExchanges >= AMOUNT_EXCHANGES)
+	if(amountExchanges > AMOUNT_EXCHANGES)
 		return -1;
 	exchanges[amountExchanges].takeoff = takeoff;
 	exchanges[amountExchanges].exchangeDistance = crosspoint;
