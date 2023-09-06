@@ -12,17 +12,19 @@
 #include "storage.h"
 #include "button.h"
 #include "menu.h"
+#include "atlete.h"
 
 enum _displayState
 {
-	MENU
+	MENU, Option1, Option2, Option3,
+	Option4, Option5, Option6
 };
 typedef enum _displayState DISPLAY_STATE;
 
-
 void DisplayTask(void* pvParamters);
-int8_t UpdateMenuIndicator(uint16_t pin);
-void DrawMenu(int8_t menuIndicator);
-void DrawIndicator(int8_t menuIndicator);
+void UpdateIndicator(int8_t *indicator, uint16_t pin, uint8_t min, uint8_t max);
+void DrawMenu(int8_t *indicator, uint16_t pin);
+void DrawIndicator(int8_t indicator);
+void ShowAthletes(uint16_t pin);
 
 #endif /* INC_DISPLAY_H_ */

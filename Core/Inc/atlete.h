@@ -34,6 +34,7 @@ extern int8_t currentIncomingRunner;
 extern int8_t currentOutgoingRunner;
 
 int AtleteInit();
+uint8_t GetAmountAtletes();
 void AtleteAddFromSDcard();
 int AtleteAdd(char* name);
 int AtleteSetData(int8_t id, double *speed, double *distance, size_t len);

@@ -18,10 +18,10 @@
 
 #define UP	GPIO_PIN_6
 #define DOWN GPIO_PIN_5
+#define LEFT GPIO_PIN_7
 
-uint16_t ReadButton();
 
-uint8_t GetPushedButton();
+uint16_t GetPushedButton();
 void SetButton(uint16_t num);
 uint8_t GetMenuIndicator();
 

@@ -135,6 +135,8 @@ void ShowAtlete(char* str, size_t len)
 }
 char* GetAtleteNameByNumber(int8_t num)
 {
+	if(atletes[num].init == false)
+		return NULL;
 	return atletes[num].name;
 }
 

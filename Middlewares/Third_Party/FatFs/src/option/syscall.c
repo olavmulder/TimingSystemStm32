@@ -22,7 +22,7 @@ int ff_cre_syncobj (	/* TRUE:Function succeeded, FALSE:Could not create due to a
 {
   int ret;
   
-  *sobj = osSemaphoreNew(1,1, NULL);
+  *sobj = osSemaphoreNew(1, 1, NULL);
   ret = (*sobj != NULL);
   
   return ret;

@@ -116,7 +116,7 @@ DRESULT USER_read (
 {
   /* USER CODE BEGIN READ */
 	return USER_SPI_read(pdrv, buff, sector, count);
-	/* USER CODE END READ */
+  /* USER CODE END READ */
 }
 
 /**
