@@ -49,7 +49,6 @@ I2C_HandleTypeDef hi2c1;
 
 SPI_HandleTypeDef hspi2;
 
-UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* Definitions for defaultTask */
@@ -67,25 +66,12 @@ const osThreadAttr_t displayTask_attributes = {
   .priority = (osPriority_t) osPriorityNormal2,
 };
 
-osThreadId_t uartTaskHandle;
-const osThreadAttr_t uartTask_attributes = {
-  .name = "uartTask",
-  .stack_size = 254 * 4,
-  .priority = (osPriority_t) osPriorityHigh4,
-};
-
 osThreadId_t uartDataTaskHandle;
 const osThreadAttr_t uartDataTask_attributes = {
   .name = "uartDataTask",
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityHigh5,
 };
-
-//global variables
-size_t uart1Bufferindex;
-uint8_t uart1Buffer[USART_BUFFER_SIZE];
-volatile bool uart1ReadBuffer;
-
 
 //number of atlete where the data will be assigned to.
 int8_t currentIncomingRunner = -1;
@@ -94,7 +80,6 @@ int8_t currentRunner = -1;
 
 size_t displayHz = 30;
 size_t mainTaskDelay = 1;
-size_t uartTaskDelay = 20;
 size_t uartDataTaskDelay = 10;
 /* USER CODE END PV */
 
@@ -102,7 +87,6 @@ size_t uartDataTaskDelay = 10;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
-static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_SPI2_Init(void);
 void StartDefaultTask(void *argument);
@@ -143,7 +127,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
-  MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   MX_SPI2_Init();
   MX_FATFS_Init();
@@ -151,9 +134,16 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
+  //init screen
   ssd1306_Init();
   ssd1306_Reset();
+  //write data to screen
+  DrawMenu(0);
+  ssd1306_UpdateScreen();
+
   AtleteAddFromSDcard();
+
+
 
   //ShowUI();
    //this test does work
@@ -195,11 +185,9 @@ int main(void)
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   displayTaskHandle = osThreadNew(DisplayTask, (void*)&displayHz, &displayTask_attributes);
-  uartTaskHandle    = osThreadNew(UARTTask, (void*)&uartTaskDelay, &uartTask_attributes);
   uartDataTaskHandle = osThreadNew(UARTDataTask, (void*)&uartDataTaskDelay, &uartDataTask_attributes);
 
   if(displayTaskHandle 	== NULL ||
-     uartTaskHandle 	== NULL ||
 	 uartDataTaskHandle == NULL)
   {
 	  return -1;
@@ -342,39 +330,6 @@ static void MX_SPI2_Init(void)
   /* USER CODE BEGIN SPI2_Init 2 */
 
   /* USER CODE END SPI2_Init 2 */
-
-}
-
-/**
-  * @brief USART1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USART1_UART_Init(void)
-{
-
-  /* USER CODE BEGIN USART1_Init 0 */
-
-  /* USER CODE END USART1_Init 0 */
-
-  /* USER CODE BEGIN USART1_Init 1 */
-
-  /* USER CODE END USART1_Init 1 */
-  huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USART1_Init 2 */
-  USART1->CR1 |= (USART_CR1_TE | USART_CR1_RXNEIE | USART_CR1_RE | USART_CR1_UE);
-  /* USER CODE END USART1_Init 2 */
 
 }
 

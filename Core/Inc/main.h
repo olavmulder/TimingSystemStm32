@@ -32,7 +32,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "display.h"
-#include "uart_communication.h"
+#include <menu.h>
 #include "lazer.h"
 #include "relay.h"
 /* USER CODE END Includes */

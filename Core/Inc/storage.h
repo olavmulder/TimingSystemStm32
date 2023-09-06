@@ -8,7 +8,6 @@
 #ifndef INC_STORAGE_H_
 #define INC_STORAGE_H_
 
-//#include "fatfs.h"
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>

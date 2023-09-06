@@ -16,12 +16,13 @@
 #include "cmsis_os.h"
 #include "atlete.h"
 
-#define MENU_HIGHT 6
+#define UP	GPIO_PIN_6
+#define DOWN GPIO_PIN_5
 
-extern uint8_t menuIndicator;
-int ReadButton();
+uint16_t ReadButton();
 
 uint8_t GetPushedButton();
 void SetButton(uint16_t num);
 uint8_t GetMenuIndicator();
+
 #endif /* INC_BUTTON_H_ */

@@ -56,13 +56,8 @@
 
 /* External variables --------------------------------------------------------*/
 extern SPI_HandleTypeDef hspi2;
-extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 /* USER CODE BEGIN EV */
-extern size_t uart1Bufferindex;
-extern uint8_t uart1Buffer[USART_BUFFER_SIZE];
-extern volatile bool uart1ReadBuffer;
-
 extern FIFO uart2Buffer;
 
 /* USER CODE END EV */
@@ -218,32 +213,6 @@ void SPI2_IRQHandler(void)
   /* USER CODE BEGIN SPI2_IRQn 1 */
 
   /* USER CODE END SPI2_IRQn 1 */
-}
-
-/**
-  * @brief This function handles USART1 global interrupt.
-  */
-void USART1_IRQHandler(void)
-{
-  /* USER CODE BEGIN USART1_IRQn 0 */
-	char ch;
-  /* USER CODE END USART1_IRQn 0 */
-  HAL_UART_IRQHandler(&huart1);
-  /* USER CODE BEGIN USART1_IRQn 1 */
-	uint32_t isrflags   = READ_REG(huart1.Instance->SR);
-	uint32_t cr1its     = READ_REG(huart1.Instance->CR1);
-	if (((isrflags & USART_SR_RXNE) != RESET) && ((cr1its & USART_CR1_RXNEIE) != RESET)){
-		huart1.Instance->SR;
-		ch = huart1.Instance->DR;
-		uart1Buffer[uart1Bufferindex] = ch;
-		uart1Bufferindex++;
-		if(ch == '\r')
-		{
-			uart1ReadBuffer = true;
-		}
-	}
-	HAL_UART_IRQHandler(&huart1);
-  /* USER CODE END USART1_IRQn 1 */
 }
 
 /**

@@ -115,7 +115,8 @@ DRESULT USER_read (
 )
 {
   /* USER CODE BEGIN READ */
-	return USER_SPI_read(pdrv, buff, sector, count); //ADD THIS LINE  /* USER CODE END READ */
+	return USER_SPI_read(pdrv, buff, sector, count);
+	/* USER CODE END READ */
 }
 
 /**
@@ -136,7 +137,8 @@ DRESULT USER_write (
 {
   /* USER CODE BEGIN WRITE */
   /* USER CODE HERE */
-	return USER_SPI_write(pdrv, buff, sector, count); //ADD THIS LINE  /* USER CODE END WRITE */
+	return USER_SPI_write(pdrv, buff, sector, count);
+  /* USER CODE END WRITE */
 }
 #endif /* _USE_WRITE == 1 */
 

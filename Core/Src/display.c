@@ -6,9 +6,8 @@
 
 #include "../Inc/display.h"
 
-#define CLEARANCE 10
-#define MULTI_INDEX 10
-
+#define FONT_HIGHT 10
+static DISPLAY_STATE displayState = MENU;
 
 void DisplayTask(void *parameter)
 {
@@ -18,80 +17,63 @@ void DisplayTask(void *parameter)
 	{
 		if(GetPushedButton())
 		{
-			ReadButton();
+			//Get Display State
+			//if menu
+			uint16_t pin = ReadButton();
+			switch(displayState)
+			{
+				case MENU:
+					DrawMenu(UpdateMenuIndicator(pin));
+					break;
+				default:
+					break;
+			}
 		}
-		DisplayAll();
 		//show i on display
 		ssd1306_UpdateScreen();
 		osDelay((int)(1000 / hz));
 	}
 }
 
-void DisplayAll()
+
+int8_t UpdateMenuIndicator(uint16_t pin)
 {
-	DisplayAtlete();
-	DisplayExchangeData();
-	DrawIndicator();
+	static int8_t menuIndicator = 0;
+	if(pin == UP)
+	{
+		menuIndicator-=1;
+		menuIndicator = (menuIndicator < Show_Athletes) ?  Get_Exchangedata : menuIndicator;
+	}
+	else if(pin == DOWN)
+	{
+		menuIndicator +=1;
+		menuIndicator = (menuIndicator > Get_Exchangedata) ? Show_Athletes : menuIndicator;
+	}
+	return menuIndicator;
+}
+void DrawMenu(int8_t menuIndicator)
+{
+	const uint8_t position = 0;
+	const uint8_t margin = 4;
+	//clear screen
+	ssd1306_Fill(Black);
+	DrawIndicator(menuIndicator);
+	for(uint8_t i = 0; i < AMOUNT_OPTIONS;i++)
+	{
+		ssd1306_SetCursor(margin, i * FONT_HIGHT);
+		ssd1306_WriteString(enumToString(i), Font_7x10 , Black);
+	}
 }
 //need to be done
-void DrawIndicator()
+void DrawIndicator(int8_t menuIndicator)
 {
-	uint8_t menuIndicator = GetMenuIndicator();
-	for(uint8_t i = 0; i < MENU_HIGHT; i++)
+	for(uint8_t i = 0; i < AMOUNT_OPTIONS; i++)
 	{
-		ssd1306_SetCursor(0, i * MULTI_INDEX);
+		ssd1306_SetCursor(0, i * FONT_HIGHT);
 		if( i == menuIndicator)
 			ssd1306_WriteString("|", Font_7x10 , Black);
 		else
 			ssd1306_WriteString(" ", Font_7x10 , Black);
 	}
 }
-void DisplayExchangeData()
-{
-	const uint8_t position = 30;
-	char str[3][20] = {
-			"Exchange at: ",
-			"Take off at: ",
-			"Call at: "
-	};
-
-	for(uint8_t i = 0; i < sizeof(str) / (sizeof(char)*20); i++)
-	{
-
-		ssd1306_SetCursor(CLEARANCE,position+(MULTI_INDEX*i));
-		ssd1306_WriteString(&str[i][0], Font_7x10 , Black);
-	}
-}
-void DisplayAtlete()
-{
-	const uint8_t string_len = 50;
-	//GetAtletes:
-	const uint8_t position = 0;
-
-	//get first two names:
-	char names[2][NAME_LENGTH];
-	memset(names[0], '\0',NAME_LENGTH);
-	memset(names[1], '\0',NAME_LENGTH);
-
-	snprintf(names[0], NAME_LENGTH, "%s", GetAtleteNameByNumber(0));
-	snprintf(names[1], NAME_LENGTH, "%s", GetAtleteNameByNumber(1));
-	char string[string_len];
-	memset(string, '\0', string_len);
-
-	char typeRunner[2][NAME_LENGTH] =
-	{
-			"in:",
-			"out:",
-	};
-
-	for(uint8_t i = 0; i < 2;i++)
-	{
-		strcpy(string, typeRunner[i]);
-		strcat(string, names[i]);
-		ssd1306_SetCursor(CLEARANCE, position+(i*MULTI_INDEX));
-		ssd1306_WriteString(string, Font_7x10 , Black);
-		memset(string, '\0', string_len);
-	}
-}
-
 
