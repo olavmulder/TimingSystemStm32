@@ -6,7 +6,8 @@
 
 #include "../Inc/display.h"
 
-#define FONT_HIGHT 10
+#define FONT_HEIGHT 10
+
 static DISPLAY_STATE displayState = MENU;
 static int8_t tempRunner = -1;
 static int8_t incomingRunner = -1;
@@ -17,7 +18,7 @@ void DrawIndicator(int8_t indicator)
 {
 	for(uint8_t i = 0; i < AMOUNT_OPTIONS; i++)
 	{
-		ssd1306_SetCursor(0, i * FONT_HIGHT);
+		ssd1306_SetCursor(0, i * FONT_HEIGHT);
 		if( i == indicator)
 			ssd1306_WriteString("|", Font_7x10 , Black);
 		else
@@ -83,6 +84,7 @@ void DisplayTask(void *parameter)
 					break;
 				case Option6:
 					//get exchange data
+					GetExchangeFromMenu();
 					break;
 				default:
 					break;
@@ -119,7 +121,7 @@ void DrawMenu(int8_t *menuIndicator, uint16_t pin)
 	DrawIndicator(*menuIndicator);
 	for(uint8_t i = 0; i < AMOUNT_OPTIONS;i++)
 	{
-		ssd1306_SetCursor(margin, i * FONT_HIGHT);
+		ssd1306_SetCursor(margin, i * FONT_HEIGHT);
 		ssd1306_WriteString(enumToString(i), Font_7x10 , Black);
 	}
 }
@@ -138,7 +140,7 @@ int8_t ShowAthletes(uint16_t pin)
 		 (i < athletesIndicator+AMOUNT_OPTIONS) && (i < amount) ;
 		i++)
 	{
-		ssd1306_SetCursor(margin,(i-athletesIndicator)* FONT_HIGHT);
+		ssd1306_SetCursor(margin,(i-athletesIndicator)* FONT_HEIGHT);
 		char *name = GetAtleteNameByNumber(i);
 		if(name != NULL)
 			ssd1306_WriteString(name, Font_7x10 , Black);
@@ -153,8 +155,25 @@ void SelectRunner(uint16_t pin)
 void ShortTimeMessage(char* msg, uint16_t time)
 {
 	ssd1306_Fill(Black);
-	ssd1306_SetCursor(0,0);
-	ssd1306_WriteString(msg, Font_7x10 , Black);
+	uint8_t rows = 0;
+	uint8_t i = 0;
+	uint8_t j = 0;
+	size_t len = strlen(msg);
+	char temp[len];
+	memset(temp, '\0', len);
+
+	for(i = 0; i < len; i++)
+	{
+		temp[j] = msg[i];
+		j++;
+		if(msg[i] == '\n'){
+			rows++;
+			j=0;
+			ssd1306_SetCursor(0,rows*FONT_HEIGHT);
+			ssd1306_WriteString(temp, Font_7x10 , Black);
+			memset(temp, '\0', len);
+		}
+	}
 	ssd1306_UpdateScreen();
 	osDelay(2000);
 }
@@ -191,4 +210,14 @@ void StartRunner(char *str, int8_t *runner)
 	}
 	snprintf(msg, 50, "%s has stopped now", str);
 	ShortTimeMessage(msg, 2000);
+}
+void GetExchangeFromMenu()
+{
+	if(incomingRunner == -1 || outgoingRunner == -1)
+	{
+		ShortTimeMessage("no incoming\nor \noutgoing runner\n", 2000);
+		displayState = MENU;
+		return;
+	}
+	CalculateRelayExchange(incomingRunner, outgoingRunner);
 }

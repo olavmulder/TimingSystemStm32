@@ -137,6 +137,8 @@ int main(void)
   //init screen
   ssd1306_Init();
   ssd1306_Reset();
+
+  InitExchange();
   //write data to screen
   int8_t indi = 0;
   DrawMenu(&indi,LEFT);

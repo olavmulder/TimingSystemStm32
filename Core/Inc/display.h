@@ -29,4 +29,5 @@ int8_t ShowAthletes(uint16_t pin);
 void HandleRunnerSelection(int8_t *runner, char* str);
 void StartRunner(char *str, int8_t *runner);
 void SelectRunner(uint16_t pin);
+void GetExchangeFromMenu();
 #endif /* INC_DISPLAY_H_ */
