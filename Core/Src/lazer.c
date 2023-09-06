@@ -12,7 +12,7 @@
 #define MESSAGE_LENGTH 9 //amount bytes for the message the lazer sends
 const size_t timeout = 1000;
 extern int8_t currentRunner;
-
+bool lazerIsRunning = false;
 FIFO uart2Buffer;
 /**
  * task for handling incoming data from the lazer
@@ -128,17 +128,20 @@ double HandleData(char* data)
 
 void StartContinuesMeasurement()
 {
+
 	const char message[9] = {0xfa, 0x01, 0xff, 0x04, 0x01, 0x00, 0x00, 0x00, 0xff};
 	if(HAL_UART_Transmit(&huart2, (uint8_t *) message, sizeof(message), timeout) != HAL_OK)
 	{
 		exit(-1);
 	}
+	lazerIsRunning = true;
 }
 
 void StopMeasurement()
 {
 	const char message[9] = {0xfa, 0x01, 0xff, 0x04, 0x00, 0x00, 0x00, 0x00, 0xfe};
 	HAL_UART_Transmit(&huart2, (uint8_t *) message, sizeof(message), timeout);
+	lazerIsRunning = false;
 }
 
 void test_makeRunningPerson()

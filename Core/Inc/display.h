@@ -25,6 +25,8 @@ void DisplayTask(void* pvParamters);
 void UpdateIndicator(int8_t *indicator, uint16_t pin, uint8_t min, uint8_t max);
 void DrawMenu(int8_t *indicator, uint16_t pin);
 void DrawIndicator(int8_t indicator);
-void ShowAthletes(uint16_t pin);
-
+int8_t ShowAthletes(uint16_t pin);
+void HandleRunnerSelection(int8_t *runner, char* str);
+void StartRunner(char *str, int8_t *runner);
+void SelectRunner(uint16_t pin);
 #endif /* INC_DISPLAY_H_ */

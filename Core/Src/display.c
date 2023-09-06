@@ -8,6 +8,10 @@
 
 #define FONT_HIGHT 10
 static DISPLAY_STATE displayState = MENU;
+static int8_t tempRunner = -1;
+static int8_t incomingRunner = -1;
+static int8_t outgoingRunner = -1;
+extern bool lazerIsRunning;
 
 void DrawIndicator(int8_t indicator)
 {
@@ -33,14 +37,30 @@ void DisplayTask(void *parameter)
 		uint16_t pin;
 		if((pin = GetPushedButton()))
 		{
-			//read pushed button pin
-			//update display state
+
+			//go to a option state from the menu view
 			if(pin == LEFT && displayState == MENU)
 				displayState = menuIndicator+1;
+
+			//if pushed left in option2 set incoming runner
+			//displaySTate = menu afterwards
+			else if(pin == LEFT &&
+					displayState == Option2)
+			{
+				HandleRunnerSelection(&incomingRunner, "incoming");
+			}
+			//if pushed left in option3 set outgoing runner
+			//displaySTate = menu afterwards
+			else if(pin == LEFT &&
+				displayState == Option3)
+			{
+				HandleRunnerSelection(&outgoingRunner, "outgoing");
+			}
+			//if push left in other option, go back to menu
 			else if(pin == LEFT)
 				displayState =  MENU;
 
-
+			//actually show the current state
 			switch(displayState)
 			{
 				case MENU:
@@ -48,6 +68,21 @@ void DisplayTask(void *parameter)
 					break;
 				case Option1:
 					ShowAthletes(pin);
+					break;
+				case Option2:
+				case Option3:
+					SelectRunner(pin);
+					break;
+				case Option4:
+					//StartIncoming
+					StartRunner("incoming", &incomingRunner);
+					break;
+				case Option5:
+					//start outgoing
+					StartRunner("outgoing", &outgoingRunner);
+					break;
+				case Option6:
+					//get exchange data
 					break;
 				default:
 					break;
@@ -89,10 +124,7 @@ void DrawMenu(int8_t *menuIndicator, uint16_t pin)
 	}
 }
 
-
-
-
-void ShowAthletes(uint16_t pin)
+int8_t ShowAthletes(uint16_t pin)
 {
 	static int8_t athletesIndicator = 0;
 
@@ -111,5 +143,52 @@ void ShowAthletes(uint16_t pin)
 		if(name != NULL)
 			ssd1306_WriteString(name, Font_7x10 , Black);
 	}
+	return athletesIndicator;
 }
 
+void SelectRunner(uint16_t pin)
+{
+	tempRunner = ShowAthletes(pin);
+}
+void ShortTimeMessage(char* msg, uint16_t time)
+{
+	ssd1306_Fill(Black);
+	ssd1306_SetCursor(0,0);
+	ssd1306_WriteString(msg, Font_7x10 , Black);
+	ssd1306_UpdateScreen();
+	osDelay(2000);
+}
+
+void HandleRunnerSelection(int8_t *runner, char* str)
+{
+	*runner = tempRunner;
+	tempRunner = -1;
+	char msg[50];
+	snprintf(msg, 50, "%s = %s",str, GetAtleteNameByNumber(*runner));
+	ShortTimeMessage(msg, 2000);
+	displayState = MENU;
+}
+
+void StartRunner(char *str, int8_t *runner)
+{
+	char msg[50];
+
+	if(*runner == -1)
+	{
+		snprintf(msg, 50, "first select %s", str);
+		ShortTimeMessage("first select outgoing", 2000);
+		displayState = MENU;
+		return;
+	}
+	StartContinuesMeasurement();
+	snprintf(msg, 50, "%s can start now", str);
+	ShortTimeMessage(msg, 2000);
+	uint8_t i = 0;
+	while(lazerIsRunning && i < 5)
+	{
+		osDelay(1000);
+		i++;
+	}
+	snprintf(msg, 50, "%s has stopped now", str);
+	ShortTimeMessage(msg, 2000);
+}
