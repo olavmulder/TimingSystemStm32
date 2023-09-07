@@ -47,18 +47,17 @@ void MountStorage()
 		while(1);
 	}
 }
-
-void OpenFile(char* fileName, ReadMode mode)
+void UnmountStorage()
 {
-	if(mode == Read)
-		fres = f_open(&fil, fileName, FA_READ);
-	else if(mode == Write)
-		fres = f_open(&fil, fileName, FA_WRITE);
+	f_mount(NULL, "", 0);
+}
+
+int8_t GetDataFromFile(char*fileName, char *buf, size_t len)
+{
+	//MountStorage();
+	fres = f_open(&fil, fileName, FA_READ);
 	if (fres != FR_OK)
 		while(1);
-}
-int8_t GetData(char *buf, size_t len)
-{
 	//We can either use f_read OR f_gets to get data out of files
 	//f_gets is a wrapper on f_read that does some string formatting for us
 	unsigned int actualRead;
@@ -66,4 +65,28 @@ int8_t GetData(char *buf, size_t len)
 	//Be a tidy kiwi - don't forget to close your file!
 	f_close(&fil);
 	return rres;
+}
+
+/*
+ * 1. mount storage
+ * 2. write the data to the given file
+ * 3. unmount storage
+ */
+void WriteDataToFile(char* name, char* msg, size_t len)
+{
+	fres = f_open(&fil, name, FA_WRITE | FA_OPEN_ALWAYS | FA_CREATE_ALWAYS);
+	if(fres != FR_OK) {
+		//TODO error handling
+		while(1);
+	}
+	char tempBuf[len];
+	snprintf(tempBuf, len, "%s", msg);
+	unsigned int bytesWrote;
+	fres = f_write(&fil, tempBuf, len, &bytesWrote);
+	if(fres != FR_OK)
+	{
+		//TODO error handling
+		while(1);
+	}
+	f_close(&fil);
 }

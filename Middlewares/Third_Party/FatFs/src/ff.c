@@ -2065,7 +2065,8 @@ FRESULT create_name (
 		c = (BYTE)p[si++];
 		if (c <= ' ' || c == '/' || c == '\\') break;	/* Break on end of segment */
 		if (c == '.' || i >= ni) {
-			if (ni != 8 || c != '.') return FR_INVALID_NAME;
+			if (ni != 8 || c != '.')
+				return FR_INVALID_NAME;
 			i = 8; ni = 11;
 			b <<= 2; continue;
 		}

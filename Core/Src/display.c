@@ -2,6 +2,8 @@
  * display.c
  *  Created on: Jul 19, 2023
  *      Author: Olav
+ *  show and handle all option on the display
+ *  including starting, stopping & selecting (type of) runners
  */
 
 #include "../Inc/display.h"
@@ -10,8 +12,11 @@
 
 static DISPLAY_STATE displayState = MENU;
 static int8_t tempRunner = -1;
-static int8_t incomingRunner = -1;
-static int8_t outgoingRunner = -1;
+
+int8_t incomingRunner = -1;
+int8_t outgoingRunner = -1;
+int8_t currentRunner = -1;
+
 extern bool lazerIsRunning;
 
 void DrawIndicator(int8_t indicator)
@@ -176,7 +181,8 @@ void ShortTimeMessage(char* msg, uint16_t time)
 		}
 	}
 	ssd1306_UpdateScreen();
-	osDelay(2000);
+	//only ca
+	//osDelay(2000);
 }
 
 void HandleRunnerSelection(int8_t *runner, char* str)
@@ -200,6 +206,7 @@ void StartRunner(char *str, int8_t *runner)
 		displayState = MENU;
 		return;
 	}
+	currentRunner = *runner;
 	StartContinuesMeasurement();
 	snprintf(msg, 50, "%s can\nstart now\n", str);
 	ShortTimeMessage(msg, 2000);
@@ -211,6 +218,7 @@ void StartRunner(char *str, int8_t *runner)
 	}
 	snprintf(msg, 50, "%s has\n stopped now\nPush left\nto exit\n", str);
 	ShortTimeMessage(msg, 2000);
+	currentRunner = -1;
 	displayState = MENU;
 }
 void GetExchangeFromMenu()
@@ -234,8 +242,32 @@ void GetExchangeFromMenu()
 		displayState = MENU;
 		return;
 	}
-	char msg[100];
-	snprintf(msg, 100, "Call at: %.2f\nExchange:%.2f\nTakeoff: %.2f\nPush left to exit\n",
-			ex.callpoint, ex.exchangeDistance, ex.takeoff);
+	uint8_t len = 100;
+	char msg[len];
+	char *nameIn = GetAtleteNameByNumber(incomingRunner);
+	char *nameOut = GetAtleteNameByNumber(outgoingRunner);
+	snprintf(msg, len, "%s to %s\nCall at: %.2f\nExchange:%.2f\nTakeoff: %.2f\nPush left to exit\n",
+			nameIn, nameOut, ex.callpoint, ex.exchangeDistance, ex.takeoff);
 	ShortTimeMessage(msg,5000);
+	//write data to SD Card
+	WriteDataToFile("exchanges.txt", msg, len);
+	incomingRunner = -1;
+	outgoingRunner = -1;
+}
+
+void test_GetExchange()
+{
+	uint8_t len = 200;
+	char msg[len];
+	char *nameIn = GetAtleteNameByNumber(0);
+	char *nameOut = GetAtleteNameByNumber(1);
+	snprintf(msg, len, "%s to %s\nCall: %.2f\nExchange:%.2f\nTakeoff: %.2f\nPush left to exit\n",
+			nameIn, nameOut, 12.50,15.00, 7.50);
+	ShortTimeMessage(msg,5000);
+	//write data to SD Card
+	WriteDataToFile("exchange.txt", msg, len);
+}
+void test_display()
+{
+	test_GetExchange();
 }

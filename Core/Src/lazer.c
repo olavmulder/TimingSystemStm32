@@ -99,7 +99,6 @@ int MeasurementDone()
 	}
 
 	DataReset();
-	currentRunner = -1;
 	return 0;
 }
 int CRCCheck(char *data, size_t len)

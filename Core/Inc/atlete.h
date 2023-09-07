@@ -8,13 +8,8 @@
 #ifndef INC_ATLETE_H_
 #define INC_ATLETE_H_
 
-#include <assert.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-
 #include "storage.h"
+#include "data.h"
 
 #define AMOUNT_ATLETES 30
 

@@ -12,7 +12,9 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
-#include <menu.h>
+#include <stdbool.h>
+#include "stm32f1xx_hal.h"
+#include "cmsis_os.h"
 
 typedef struct _data Data;
 struct _data

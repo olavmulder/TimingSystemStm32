@@ -38,15 +38,14 @@ int AtleteInit()
 }
 void AtleteAddFromSDcard()
 {
-	//open file
-	MountStorage();
-	OpenFile("names.txt", Read);
+
+
 	//make buffer to read from
-	const uint16_t len = AMOUNT_ATLETES*NAME_LENGTH;
+	const uint16_t len = AMOUNT_ATLETES*NAME_LENGTH+2;
 	char buffer[len];
 	memset(buffer, '\0', len);
 	//set all data in buffer
-	if(GetData(buffer, len) != 0)
+	if(GetDataFromFile("names.txt", buffer, len) != 0)
 		while(1);
 	uint16_t i = 0;
 	size_t add = 0;

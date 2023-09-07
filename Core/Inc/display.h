@@ -9,10 +9,11 @@
 #define INC_DISPLAY_H_
 
 #include "ssd1306/ssd1306.h"
-#include "storage.h"
+#include "relay.h"
+
 #include "button.h"
 #include "menu.h"
-#include "atlete.h"
+
 
 enum _displayState
 {
@@ -30,4 +31,6 @@ void HandleRunnerSelection(int8_t *runner, char* str);
 void StartRunner(char *str, int8_t *runner);
 void SelectRunner(uint16_t pin);
 void GetExchangeFromMenu();
+
+void test_display();
 #endif /* INC_DISPLAY_H_ */

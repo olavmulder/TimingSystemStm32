@@ -73,11 +73,6 @@ const osThreadAttr_t uartDataTask_attributes = {
   .priority = (osPriority_t) osPriorityHigh5,
 };
 
-//number of atlete where the data will be assigned to.
-int8_t currentIncomingRunner = -1;
-int8_t currentOutgoingRunner = -1;
-int8_t currentRunner = -1;
-
 size_t displayHz = 30;
 size_t mainTaskDelay = 1;
 size_t uartDataTaskDelay = 10;
@@ -143,8 +138,13 @@ int main(void)
   int8_t indi = 0;
   DrawMenu(&indi,LEFT);
   ssd1306_UpdateScreen();
-
+  MountStorage();
   AtleteAddFromSDcard();
+  test_display();
+
+
+
+
 
 
 
