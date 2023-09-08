@@ -7,4 +7,4 @@ on SD card add a file named, 'names.txt' with [<i>name0</i>,<i>name1</i>] as for
 Menu can be used with buttons
 
 changed to two device to seperate tasks
-moved to :
+moved to : https://github.com/olavmulder/RelayTimingSystem/tree/master
